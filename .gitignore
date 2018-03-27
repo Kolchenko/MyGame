@@ -322,3 +322,7 @@ sysinfo.txt
 
 # my doc
 currentGamePlans.txt
+
+GameSrc/ProjectSettings/*
+GameSrc/Library/*
+GameSrc/UnityPackageManager/*
