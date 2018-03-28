@@ -326,3 +326,4 @@ currentGamePlans.txt
 GameSrc/ProjectSettings/*
 GameSrc/Library/*
 GameSrc/UnityPackageManager/*
+GameSrc/Temp

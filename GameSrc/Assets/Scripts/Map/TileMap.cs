@@ -2,7 +2,8 @@
 
 public class TileMap : MonoBehaviour
 {
-    public Transform hexPrefab;
+    public TileType[] tileTypes;
+    //public Transform hexPrefab;
 
     public int tileWidth = 11;
     public int tileHeight = 11;
@@ -56,7 +57,9 @@ public class TileMap : MonoBehaviour
         {
             for (int x = 0; x < tileWidth; x++)
             {
-                Transform hex = Instantiate(hexPrefab) as Transform;
+                //todo: set random tile type
+                TileType tt = tileTypes[0];
+                Transform hex = Instantiate(tt.tileVisualPrefab.transform) as Transform;
                 Vector2 tilePos = new Vector2(x, y);
                 hex.position = CalcWorldPos(tilePos);
                 hex.parent = this.transform;
