@@ -1,27 +1,47 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
+    class Node
+    {
+        public List<Node> neighbours;
+
+        public Node()
+        {
+            neighbours = new List<Node>();
+        }
+    }
+
     public TileType[] tileTypes;
     Vector3 startPos;
-    Tile tile;
+
+    public int tileWidth = 15;
+    public int tileHeight = 11;
+    public float gap = 0.1f;
+
+    float hexWidth = 1.732f;
+    float hexHeight = 2.0f;
+
+    Node[,] graph;
 
     void Start()
     {
         CreateTile();
         CalcStartPos();
         CreateTileMap();
+        GeneratePathfindingGraph();
     }
 
     void CalcStartPos()
     {
         float offset = 0;
-        if (tile.tileHeight / 2 % 2 != 0)
-            offset = tile.hexWidth / 2;
+        if (tileHeight / 2 % 2 != 0)
+            offset = hexWidth / 2;
 
-        float x = -tile.hexWidth * (tile.tileWidth / 2) - offset;
-        float z = tile.hexHeight * 0.75f * (tile.tileHeight / 2);
+        float x = -hexWidth * (tileWidth / 2) - offset;
+        float z = hexHeight * 0.75f * (tileHeight / 2);
 
         startPos = new Vector3(x, 0, z);
     }
@@ -30,19 +50,18 @@ public class TileMap : MonoBehaviour
     {
         float offset = 0;
         if (tilePos.y % 2 != 0)
-            offset = tile.hexWidth / 2;
+            offset = hexWidth / 2;
 
-        float x = startPos.x + tilePos.x * tile.hexWidth + offset;
-        float z = startPos.z - tilePos.y * tile.hexHeight * 0.75f;
+        float x = startPos.x + tilePos.x * hexWidth + offset;
+        float z = startPos.z - tilePos.y * hexHeight * 0.75f;
 
         return new Vector3(x, 0, z);
     }
 
     void CreateTile()
     {
-        tile = new GameObject().AddComponent<Tile>();
-        tile.hexWidth += tile.hexWidth * tile.gap;
-        tile.hexHeight += tile.hexHeight * tile.gap;
+        hexWidth += hexWidth * gap;
+        hexHeight += hexHeight * gap;
     }
 
     void CreateTileMap()
@@ -53,17 +72,17 @@ public class TileMap : MonoBehaviour
         int countMountainTile = 0;
         System.Random rand = new System.Random();
 
-        for (int y = 0; y < tile.tileHeight; y++)
+        for (int y = 0; y < tileHeight; y++)
         {
-            for (int x = 0; x < tile.tileWidth; x++)
+            for (int x = 0; x < tileWidth; x++)
             {
                 TileType tt;
                 int tileType = 0;
-                if (y > tile.tileWidth / 3)
+                if (y > tileWidth / 3)
                 {
                     tileType = rand.Next(3);
                 }
-                
+
                 if (tileType == 1 && countMountainTile != mountainLimit) {
                     tt = tileTypes[1];
                     ++countMountainTile;
@@ -86,4 +105,137 @@ public class TileMap : MonoBehaviour
             }
         }
     }
+
+    void GeneratePathfindingGraph()
+    {
+        graph = new Node[tileWidth, tileHeight];
+
+        // Initialize a Node for each spot in the array
+        for (int x = 0; x < tileWidth; x++)
+        {
+            for (int y = 0; y < tileHeight; y++)
+            {
+                graph[x, y] = new Node();
+            }
+        }
+
+        for (int x = 0; x < tileWidth; x++)
+        {
+            for (int y = 0; y < tileHeight; y++)
+            {
+                InsertNeighbours(x, y, ref graph);
+
+            }
+        }
+    }
+
+        void InsertNeighbours(int x, int y, ref Node[,] graph)
+        {
+            //even
+            if (y % 2 == 0)
+            {
+                if (x > 0 && x < tileWidth - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                }
+                if (y > 0 && x > 0)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                }
+                if (y < tileHeight - 1 && x > 0)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                }
+
+                //borders
+                if (x == 0 && y != 0 && y != tileHeight - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                }
+                else if (x == tileWidth - 1 && y != 0 && y != tileHeight - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                }
+                else if (x == 0 && y == 0)
+                {
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                }
+                else if (x == 0 && y == tileHeight - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                }
+                else if (x == tileWidth - 1 && y == 0)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                }
+                else if (x == tileWidth - 1 && y == tileHeight - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                }
+                else if (y == 0)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                }
+                else if (y == tileHeight - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                }
+            }
+            //odd
+            else
+            {
+                if (x > 0 && x < tileWidth - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                }
+                if (y > 0 && x < tileWidth - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
+                }
+                if (y < tileHeight - 1 && x < tileWidth - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
+                }
+
+                //borders
+                if (x == 0)
+                {
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                    graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                }
+                else if (x == tileWidth - 1)
+                {
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+                }
+            }
+        }
 }
