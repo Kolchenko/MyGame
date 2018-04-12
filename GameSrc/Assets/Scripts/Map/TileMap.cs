@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
+    public GameObject selectedUnit;
+
     class Node
     {
         public List<Node> neighbours;
@@ -72,18 +74,19 @@ public class TileMap : MonoBehaviour
         int countMountainTile = 0;
         System.Random rand = new System.Random();
 
-        for (int y = 0; y < tileHeight; y++)
+        for (int x = 0; x < tileWidth; x++)
         {
-            for (int x = 0; x < tileWidth; x++)
+            for (int y = 0; y < tileHeight; y++)
             {
                 TileType tt;
                 int tileType = 0;
-                if (y > tileWidth / 3)
+                if (x > tileWidth / 3)
                 {
                     tileType = rand.Next(3);
                 }
 
-                if (tileType == 1 && countMountainTile != mountainLimit) {
+                if (tileType == 1 && countMountainTile != mountainLimit)
+                {
                     tt = tileTypes[1];
                     ++countMountainTile;
                 }
@@ -99,9 +102,19 @@ public class TileMap : MonoBehaviour
 
                 Transform hex = Instantiate(tt.tileVisualPrefab.transform) as Transform;
                 Vector2 tilePos = new Vector2(x, y);
+
                 hex.position = CalcWorldPos(tilePos);
                 hex.parent = this.transform;
                 hex.name = "Hexagon" + x + "|" + y;
+
+                ClickableTile ct;
+                if (hex.GetComponent<ClickableTile>() != null)
+                {
+                    ct = hex.GetComponent<ClickableTile>();
+                    ct.tileX = hex.position.x;
+                    ct.tileY = hex.position.z;
+                    ct.map = this;
+                }
             }
         }
     }
@@ -129,113 +142,118 @@ public class TileMap : MonoBehaviour
         }
     }
 
-        void InsertNeighbours(int x, int y, ref Node[,] graph)
+    void InsertNeighbours(int x, int y, ref Node[,] graph)
+    {
+        //even
+        if (y % 2 == 0)
         {
-            //even
-            if (y % 2 == 0)
+            if (x > 0 && x < tileWidth - 1)
             {
-                if (x > 0 && x < tileWidth - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                }
-                if (y > 0 && x > 0)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                }
-                if (y < tileHeight - 1 && x > 0)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                }
-
-                //borders
-                if (x == 0 && y != 0 && y != tileHeight - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                }
-                else if (x == tileWidth - 1 && y != 0 && y != tileHeight - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                }
-                else if (x == 0 && y == 0)
-                {
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                }
-                else if (x == 0 && y == tileHeight - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                }
-                else if (x == tileWidth - 1 && y == 0)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                }
-                else if (x == tileWidth - 1 && y == tileHeight - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                }
-                else if (y == 0)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                }
-                else if (y == tileHeight - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                }
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
             }
-            //odd
-            else
+            if (y > 0 && x > 0)
             {
-                if (x > 0 && x < tileWidth - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                }
-                if (y > 0 && x < tileWidth - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
-                }
-                if (y < tileHeight - 1 && x < tileWidth - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
-                }
+                graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+            }
+            if (y < tileHeight - 1 && x > 0)
+            {
+                graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
 
-                //borders
-                if (x == 0)
-                {
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y]);
-                    graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                }
-                else if (x == tileWidth - 1)
-                {
-                    graph[x, y].neighbours.Add(graph[x, y - 1]);
-                    graph[x, y].neighbours.Add(graph[x - 1, y]);
-                    graph[x, y].neighbours.Add(graph[x, y + 1]);
-                }
+            //borders
+            if (x == 0 && y != 0 && y != tileHeight - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
+            else if (x == tileWidth - 1 && y != 0 && y != tileHeight - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+                graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
+            else if (x == 0 && y == 0)
+            {
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
+            else if (x == 0 && y == tileHeight - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+            }
+            else if (x == tileWidth - 1 && y == 0)
+            {
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
+            else if (x == tileWidth - 1 && y == tileHeight - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+            }
+            else if (y == 0)
+            {
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
+            }
+            else if (y == tileHeight - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
             }
         }
+        //odd
+        else
+        {
+            if (x > 0 && x < tileWidth - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
+            }
+            if (y > 0 && x < tileWidth - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+                graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
+            }
+            if (y < tileHeight - 1 && x < tileWidth - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+                graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
+            }
+
+            //borders
+            if (x == 0)
+            {
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+                graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
+                graph[x, y].neighbours.Add(graph[x + 1, y]);
+                graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
+            else if (x == tileWidth - 1)
+            {
+                graph[x, y].neighbours.Add(graph[x, y - 1]);
+                graph[x, y].neighbours.Add(graph[x - 1, y]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
+        }
+    }
+
+    public void MoveSelectedUnitTo(float x, float y)
+    {
+        selectedUnit.transform.position = new Vector3(x, 0.6f, y);
+    }
 }
