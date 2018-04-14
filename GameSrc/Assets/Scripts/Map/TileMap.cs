@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
-    public GameObject selectedUnit;
+    static private GameObject selectedUnit;
+
+    static public void setSelectedUnit(GameObject unit)
+    {
+        selectedUnit = unit;
+    }
 
     class Node
     {
@@ -254,6 +259,10 @@ public class TileMap : MonoBehaviour
 
     public void MoveSelectedUnitTo(float x, float y)
     {
-        selectedUnit.transform.position = new Vector3(x, 0.6f, y);
+        if (selectedUnit != null)
+        {
+            selectedUnit.transform.position = new Vector3(x, 0.6f, y);
+            selectedUnit = null; // reset selected
+        }
     }
 }
