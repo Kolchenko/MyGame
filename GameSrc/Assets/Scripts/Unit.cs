@@ -21,6 +21,9 @@ public class Unit : MonoBehaviour {
                 Debug.Log(hit.transform.gameObject.name);
                 map.setSelectedUnit(hit.transform.gameObject.GetComponent<Unit>());
             }
+
+
+            Vector2 tilePos = map.GetTileCoordinatesByWorldPosition(new Vector3(tileX, 0, tileZ));
         }
     }
 

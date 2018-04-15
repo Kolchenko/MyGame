@@ -90,6 +90,18 @@ public class TileMap : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 
+    public Vector2 GetTileCoordinatesByWorldPosition(Vector3 tileWorldPos)
+    {
+        float offset = 0;
+        if ((int)tileWorldPos.x % 2 != 0)
+            offset = hexWidth / 2;
+
+        int x = (int)((tileWorldPos.x - startPos.x - offset) / hexWidth);
+        float z = ((tileWorldPos.z - startPos.z) / (hexHeight * 0.75f) * (-1.0f));
+
+        return new Vector2(x, (int)z);
+    }
+
     void CreateTile()
     {
         hexWidth += hexWidth * gap;
