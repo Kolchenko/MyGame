@@ -411,6 +411,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a0c411a72235d408f332a3e2bec968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  map: {fileID: 700908718}
+  tileX: 0
+  tileY: 0
+  maxDistance: 3
 --- !u!1 &1189588235
 GameObject:
   m_ObjectHideFlags: 0
@@ -513,6 +517,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a0c411a72235d408f332a3e2bec968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  map: {fileID: 700908718}
+  tileX: 0
+  tileY: 0
+  maxDistance: 1
 --- !u!1 &1286356728
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,6 +784,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a0c411a72235d408f332a3e2bec968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  map: {fileID: 700908718}
+  tileX: 0
+  tileY: 0
+  maxDistance: 2
 --- !u!1 &1433814715
 GameObject:
   m_ObjectHideFlags: 0

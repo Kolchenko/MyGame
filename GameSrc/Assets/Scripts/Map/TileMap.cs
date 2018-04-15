@@ -4,17 +4,32 @@ using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
-    static private GameObject selectedUnit;
+    static private Unit selectedUnit;
 
-    static public void setSelectedUnit(GameObject unit)
+    static Color startPlayerColor;
+    static Color selectedPlayerColor = new Color(0.1f,0.1f,0.9f);
+
+    public void setSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
+        startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
+        selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
+        selectTiles(unit);
+    }
+
+    private void selectTiles(Unit unit)
+    {
+        float x = unit.transform.position.x;
+        float y = unit.transform.position.y;
+        float z = unit.transform.position.z;
+        Node[,] _graph = graph;
+
+        Vector3 worldPos = CalcWorldPos(new Vector2(x, z));
     }
 
     class Node
     {
         public List<Node> neighbours;
-
         public Node()
         {
             neighbours = new List<Node>();
@@ -142,7 +157,6 @@ public class TileMap : MonoBehaviour
             for (int y = 0; y < tileHeight; y++)
             {
                 InsertNeighbours(x, y, ref graph);
-
             }
         }
     }
@@ -177,11 +191,7 @@ public class TileMap : MonoBehaviour
             }
             else if (x == tileWidth - 1 && y != 0 && y != tileHeight - 1)
             {
-                graph[x, y].neighbours.Add(graph[x, y - 1]);
-                graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
-                graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                graph[x, y].neighbours.Add(graph[x, y + 1]);
             }
             else if (x == 0 && y == 0)
             {
@@ -196,28 +206,10 @@ public class TileMap : MonoBehaviour
             else if (x == tileWidth - 1 && y == 0)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
-                graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                graph[x, y].neighbours.Add(graph[x, y + 1]);
             }
             else if (x == tileWidth - 1 && y == tileHeight - 1)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
-                graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
-                graph[x, y].neighbours.Add(graph[x, y - 1]);
-            }
-            else if (y == 0)
-            {
-                graph[x, y].neighbours.Add(graph[x - 1, y]);
-                graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                graph[x, y].neighbours.Add(graph[x, y + 1]);
-                graph[x, y].neighbours.Add(graph[x + 1, y]);
-            }
-            else if (y == tileHeight - 1)
-            {
-                graph[x, y].neighbours.Add(graph[x - 1, y]);
-                graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
-                graph[x, y].neighbours.Add(graph[x, y - 1]);
-                graph[x, y].neighbours.Add(graph[x + 1, y]);
             }
         }
         //odd
@@ -235,18 +227,14 @@ public class TileMap : MonoBehaviour
             }
             if (y < tileHeight - 1 && x < tileWidth - 1)
             {
-                graph[x, y].neighbours.Add(graph[x, y + 1]);
+                graph[x, y].neighbours.Add(graph[x, y + 1]);                
                 graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
             }
 
             //borders
             if (x == 0)
             {
-                graph[x, y].neighbours.Add(graph[x, y - 1]);
-                graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
                 graph[x, y].neighbours.Add(graph[x + 1, y]);
-                graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
-                graph[x, y].neighbours.Add(graph[x, y + 1]);
             }
             else if (x == tileWidth - 1)
             {
@@ -257,12 +245,20 @@ public class TileMap : MonoBehaviour
         }
     }
 
-    public void MoveSelectedUnitTo(float x, float y)
+    public void MoveSelectedUnitTo(float x, float z)
     {
         if (selectedUnit != null)
         {
-            selectedUnit.transform.position = new Vector3(x, 0.6f, y);
+            selectedUnit.transform.position = new Vector3(x, selectedUnit.transform.position.y, z);
+            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
             selectedUnit = null; // reset selected
         }
     }
+
+    //public TileMap getTileMap()
+    //{
+    //    Unit unit = selectedUnit.GetComponent<Unit>();
+    //    unit.map = this;
+    //    return unit.map;
+    //}
 }
