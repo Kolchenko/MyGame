@@ -257,6 +257,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c4678a3bb7583749baab92f26a073ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerUnits:
+  - {fileID: 1189588240}
+  - {fileID: 1411578719}
+  - {fileID: 1088683905}
   tileTypes:
   - name: grass
     tileVisualPrefab: {fileID: 1823034527796484, guid: bb13b1611f5223e4eb4f4e27cfe16af8,
@@ -412,8 +416,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 700908718}
-  tileX: 0
-  tileY: 0
+  tileX: -13.3364
+  tileZ: -6.6
   maxDistance: 3
 --- !u!1 &1189588235
 GameObject:
@@ -518,8 +522,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 700908718}
-  tileX: 0
-  tileY: 0
+  tileX: -13.3364
+  tileZ: -0.0000001788139
   maxDistance: 1
 --- !u!1 &1286356728
 GameObject:
@@ -785,8 +789,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 700908718}
-  tileX: 0
-  tileY: 0
+  tileX: -13.3364
+  tileZ: 6.6
   maxDistance: 2
 --- !u!1 &1433814715
 GameObject:

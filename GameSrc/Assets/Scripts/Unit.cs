@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour {
     public TileMap map;
-    public int tileX;
-    public int tileY;
+    public float tileX;
+    public float tileZ;
     public int maxDistance = 3;
 
     private void OnMouseUp()
     {
+        map.resetSelectedUnit();
         if (Input.GetMouseButtonUp(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -21,5 +22,11 @@ public class Unit : MonoBehaviour {
                 map.setSelectedUnit(hit.transform.gameObject.GetComponent<Unit>());
             }
         }
+    }
+
+    public void UpdatePosition(float x, float z)
+    {
+        tileX = x;
+        tileZ = z;
     }
 }

@@ -4,27 +4,37 @@ using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
-    static private Unit selectedUnit;
+    public Unit[] playerUnits;
 
+    static private Unit selectedUnit;
     static Color startPlayerColor;
     static Color selectedPlayerColor = new Color(0.1f,0.1f,0.9f);
+
+    public void resetSelectedUnit()
+    {
+        if (selectedUnit != null)
+        {
+            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
+            selectedUnit = null;
+        }
+    }
 
     public void setSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
         startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
         selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
-        selectTiles(unit);
+        //selectTiles(unit);
     }
 
     private void selectTiles(Unit unit)
     {
-        float x = unit.transform.position.x;
-        float y = unit.transform.position.y;
-        float z = unit.transform.position.z;
-        Node[,] _graph = graph;
+        //float x = unit.transform.position.x;
+        //float y = unit.transform.position.y;
+        //float z = unit.transform.position.z;
+        //Node[,] _graph = graph;
 
-        Vector3 worldPos = CalcWorldPos(new Vector2(x, z));
+        //Vector3 worldPos = CalcWorldPos(new Vector2(x, z));
     }
 
     class Node
@@ -247,12 +257,28 @@ public class TileMap : MonoBehaviour
 
     public void MoveSelectedUnitTo(float x, float z)
     {
-        if (selectedUnit != null)
+        if (selectedUnit != null && isEmptyTile(x, z))
         {
             selectedUnit.transform.position = new Vector3(x, selectedUnit.transform.position.y, z);
-            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
-            selectedUnit = null; // reset selected
+            selectedUnit.UpdatePosition(x, z);
+            resetSelectedUnit();
         }
+    }
+
+    private bool isEmptyTile(float x, float z)
+    {
+        foreach (var item in playerUnits)
+        {
+            if ((int)item.tileX == (int)x && (int)item.tileZ == (int)z)
+            {
+                if (item.tileX * x > 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     //public TileMap getTileMap()
