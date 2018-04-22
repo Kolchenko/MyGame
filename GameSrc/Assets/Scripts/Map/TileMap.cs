@@ -1,62 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
-    public Unit[] playerUnits;
+    public static TileMap Instance { get; private set; }
 
-    static private Unit selectedUnit;
-    static Color startPlayerColor;
-    static Color selectedPlayerColor = new Color(0.1f,0.1f,0.9f);
-
-    public void resetSelectedUnit()
+    public void Awake()
     {
-        if (selectedUnit != null)
-        {
-            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
-            selectedUnit = null;
-        }
+        Instance = this;
     }
 
-    public void setSelectedUnit(Unit unit)
-    {
-        selectedUnit = unit;
-        startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
-        selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
-        //selectTiles(unit);
-    }
-
-    private void selectTiles(Unit unit)
-    {
-        //float x = unit.transform.position.x;
-        //float y = unit.transform.position.y;
-        //float z = unit.transform.position.z;
-        //Node[,] _graph = graph;
-
-        //Vector3 worldPos = CalcWorldPos(new Vector2(x, z));
-    }
-
-    class Node
-    {
-        public List<Node> neighbours;
-        public Node()
-        {
-            neighbours = new List<Node>();
-        }
-    }
-
-    public TileType[] tileTypes;
-    Vector3 startPos;
-
-    public int tileWidth = 15;
-    public int tileHeight = 11;
+    public int width = 15;
+    public int height = 11;
     public float gap = 0.1f;
-
     float hexWidth = 1.732f;
     float hexHeight = 2.0f;
+    Vector3 startPos;
 
+    public TileType[] tileTypes;
     Node[,] graph;
+    List<Node> currentPath = null;
+    int[,] tiles;
 
     void Start()
     {
@@ -69,16 +35,16 @@ public class TileMap : MonoBehaviour
     void CalcStartPos()
     {
         float offset = 0;
-        if (tileHeight / 2 % 2 != 0)
+        if (height / 2 % 2 != 0)
             offset = hexWidth / 2;
 
-        float x = -hexWidth * (tileWidth / 2) - offset;
-        float z = hexHeight * 0.75f * (tileHeight / 2);
+        float x = -hexWidth * (width / 2) - offset;
+        float z = hexHeight * 0.75f * (height / 2);
 
         startPos = new Vector3(x, 0, z);
     }
 
-    Vector3 CalcWorldPos(Vector2 tilePos)
+    public Vector3 CalcWorldPos(Vector2 tilePos)
     {
         float offset = 0;
         if (tilePos.y % 2 != 0)
@@ -96,10 +62,10 @@ public class TileMap : MonoBehaviour
         if ((int)tileWorldPos.x % 2 != 0)
             offset = hexWidth / 2;
 
-        int x = (int)((tileWorldPos.x - startPos.x - offset) / hexWidth);
-        float z = ((tileWorldPos.z - startPos.z) / (hexHeight * 0.75f) * (-1.0f));
+        float x = (tileWorldPos.x - startPos.x - offset) / hexWidth;
+        float z = (tileWorldPos.z - startPos.z) / (hexHeight * 0.75f) * (-1.0f);
 
-        return new Vector2(x, (int)z);
+        return new Vector2((int)x, (int)z);
     }
 
     void CreateTile()
@@ -115,14 +81,16 @@ public class TileMap : MonoBehaviour
         int countSwampTile = 0;
         int countMountainTile = 0;
         System.Random rand = new System.Random();
+        tiles = new int[width, height];
 
-        for (int x = 0; x < tileWidth; x++)
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < tileHeight; y++)
+            for (int y = 0; y < height; y++)
             {
+                #region get tile type
                 TileType tt;
                 int tileType = 0;
-                if (x > tileWidth / 3)
+                if (x > width / 3)
                 {
                     tileType = rand.Next(3);
                 }
@@ -141,42 +109,34 @@ public class TileMap : MonoBehaviour
                 {
                     tt = tileTypes[0];
                 }
+                #endregion
 
-                Transform hex = Instantiate(tt.tileVisualPrefab.transform) as Transform;
+                Tile currentTile = new GameObject().AddComponent<Tile>();
                 Vector2 tilePos = new Vector2(x, y);
-
-                hex.position = CalcWorldPos(tilePos);
-                hex.parent = this.transform;
-                hex.name = "Hexagon" + x + "|" + y;
-
-                ClickableTile ct;
-                if (hex.GetComponent<ClickableTile>() != null)
-                {
-                    ct = hex.GetComponent<ClickableTile>();
-                    ct.tileX = hex.position.x;
-                    ct.tileY = hex.position.z;
-                    ct.map = this;
-                }
+                currentTile.Create(tt.tileVisualPrefab.transform, tilePos);
+                tiles[x, y] = TileType.GetTileTypeByTileName(tt.name);
             }
         }
     }
 
     void GeneratePathfindingGraph()
     {
-        graph = new Node[tileWidth, tileHeight];
+        graph = new Node[width, height];
 
         // Initialize a Node for each spot in the array
-        for (int x = 0; x < tileWidth; x++)
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < tileHeight; y++)
+            for (int y = 0; y < height; y++)
             {
                 graph[x, y] = new Node();
+                graph[x, y].x = x;
+                graph[x, y].y = y;
             }
         }
 
-        for (int x = 0; x < tileWidth; x++)
+        for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < tileHeight; y++)
+            for (int y = 0; y < height; y++)
             {
                 InsertNeighbours(x, y, ref graph);
             }
@@ -188,7 +148,7 @@ public class TileMap : MonoBehaviour
         //even
         if (y % 2 == 0)
         {
-            if (x > 0 && x < tileWidth - 1)
+            if (x > 0 && x < width - 1)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
                 graph[x, y].neighbours.Add(graph[x + 1, y]);
@@ -198,20 +158,20 @@ public class TileMap : MonoBehaviour
                 graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
                 graph[x, y].neighbours.Add(graph[x, y - 1]);
             }
-            if (y < tileHeight - 1 && x > 0)
+            if (y < height - 1 && x > 0)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
                 graph[x, y].neighbours.Add(graph[x, y + 1]);
             }
 
             //borders
-            if (x == 0 && y != 0 && y != tileHeight - 1)
+            if (x == 0 && y != 0 && y != height - 1)
             {
                 graph[x, y].neighbours.Add(graph[x, y - 1]);
                 graph[x, y].neighbours.Add(graph[x + 1, y]);
                 graph[x, y].neighbours.Add(graph[x, y + 1]);
             }
-            else if (x == tileWidth - 1 && y != 0 && y != tileHeight - 1)
+            else if (x == width - 1 && y != 0 && y != height - 1)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
             }
@@ -220,16 +180,16 @@ public class TileMap : MonoBehaviour
                 graph[x, y].neighbours.Add(graph[x + 1, y]);
                 graph[x, y].neighbours.Add(graph[x, y + 1]);
             }
-            else if (x == 0 && y == tileHeight - 1)
+            else if (x == 0 && y == height - 1)
             {
                 graph[x, y].neighbours.Add(graph[x + 1, y]);
                 graph[x, y].neighbours.Add(graph[x, y - 1]);
             }
-            else if (x == tileWidth - 1 && y == 0)
+            else if (x == width - 1 && y == 0)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
             }
-            else if (x == tileWidth - 1 && y == tileHeight - 1)
+            else if (x == width - 1 && y == height - 1)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
             }
@@ -237,17 +197,17 @@ public class TileMap : MonoBehaviour
         //odd
         else
         {
-            if (x > 0 && x < tileWidth - 1)
+            if (x > 0 && x < width - 1)
             {
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
                 graph[x, y].neighbours.Add(graph[x + 1, y]);
             }
-            if (y > 0 && x < tileWidth - 1)
+            if (y > 0 && x < width - 1)
             {
                 graph[x, y].neighbours.Add(graph[x, y - 1]);
                 graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
             }
-            if (y < tileHeight - 1 && x < tileWidth - 1)
+            if (y < height - 1 && x < width - 1)
             {
                 graph[x, y].neighbours.Add(graph[x, y + 1]);                
                 graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
@@ -258,7 +218,7 @@ public class TileMap : MonoBehaviour
             {
                 graph[x, y].neighbours.Add(graph[x + 1, y]);
             }
-            else if (x == tileWidth - 1)
+            else if (x == width - 1)
             {
                 graph[x, y].neighbours.Add(graph[x, y - 1]);
                 graph[x, y].neighbours.Add(graph[x - 1, y]);
@@ -267,13 +227,115 @@ public class TileMap : MonoBehaviour
         }
     }
 
+    //---------------------------------UNIT---------------------------------------------
+
+    public Unit[] playerUnits;
+    static public Unit selectedUnit;
+    static Color startPlayerColor;
+    static Color selectedPlayerColor = new Color(0.1f, 0.1f, 0.9f);
+
+    public void SelectUnit(Unit unit)
+    {
+        selectedUnit = unit;
+        startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
+        selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
+    }
+    public void DeselectUnit()
+    {
+        if (selectedUnit != null)
+        {
+            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
+            selectedUnit = null;
+        }
+    }
+
+    public void GeneratePathTo(float x, float z)
+    {
+        selectedUnit.currentPath = null;
+        Dictionary<Node, float> dist = new Dictionary<Node, float>();
+        Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
+        List<Node> unvisited = new List<Node>();
+
+        Vector2 sourceLocalPos = GetTileCoordinatesByWorldPosition(new Vector3(selectedUnit.tileX, 0, selectedUnit.tileZ));
+        Vector2 targetLocalPos = GetTileCoordinatesByWorldPosition(new Vector3(x, 0, z));
+
+        Node source = graph[(int)sourceLocalPos.x, (int)sourceLocalPos.y];
+        Node target = graph[(int)targetLocalPos.x, (int)targetLocalPos.y];
+
+
+        dist[source] = 0;
+        prev[source] = null;
+
+        foreach (var vertex in graph)
+        {
+            if (vertex != source)
+            {
+                dist[vertex] = Mathf.Infinity;
+                prev[vertex] = null;
+            }
+            unvisited.Add(vertex);
+        }
+
+        while (unvisited.Count > 0)
+        {
+            Node u = null;
+
+            foreach (var possibleU in unvisited)
+            {
+                if (u == null || dist[u] > dist[possibleU])
+                {
+                    u = possibleU;
+                }
+            }
+
+            if (u == target)
+            {
+                break;
+            }
+
+            unvisited.Remove(u);
+
+            foreach (var v in u.neighbours)
+            {
+                //float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
+                float alt = dist[u] + CostToEnterTile(v.x, v.y);
+                if (alt < dist[v])
+                {
+                    dist[v] = alt;
+                    prev[v] = u;
+                }
+            }
+        }
+
+        if (prev[target] == null)
+        {
+            //No route between source and target
+            return;
+        }
+        else
+        {
+            currentPath = new List<Node>();
+            Node currentTile = target;
+
+            while (currentTile != null)
+            {
+                currentPath.Add(currentTile);
+                currentTile = prev[currentTile];
+            }
+
+            currentPath.Reverse();
+            selectedUnit.currentPath = currentPath;
+        }
+    }
+
     public void MoveSelectedUnitTo(float x, float z)
     {
         if (selectedUnit != null && isEmptyTile(x, z))
         {
-            selectedUnit.transform.position = new Vector3(x, selectedUnit.transform.position.y, z);
+            //selectedUnit.transform.position = new Vector3(x, selectedUnit.transform.position.y, z);  
+            
             selectedUnit.UpdatePosition(x, z);
-            resetSelectedUnit();
+            DeselectUnit();
         }
     }
 
@@ -291,12 +353,15 @@ public class TileMap : MonoBehaviour
         }
 
         return true;
+    }    
+
+    public List<Node> getNeighboursByUnitPos(Vector2 unitPos)
+    {
+        return graph[(int)unitPos.x, (int)unitPos.y].neighbours;
     }
 
-    //public TileMap getTileMap()
-    //{
-    //    Unit unit = selectedUnit.GetComponent<Unit>();
-    //    unit.map = this;
-    //    return unit.map;
-    //}
+    int CostToEnterTile(int x, int y)
+    {
+        return tileTypes[tiles[x, y]].movementCost;
+    }
 }

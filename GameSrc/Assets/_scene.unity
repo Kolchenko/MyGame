@@ -257,23 +257,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c4678a3bb7583749baab92f26a073ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerUnits:
-  - {fileID: 1189588240}
-  - {fileID: 1411578719}
-  - {fileID: 1088683905}
+  width: 15
+  height: 11
+  gap: 0.1
   tileTypes:
   - name: grass
     tileVisualPrefab: {fileID: 1823034527796484, guid: bb13b1611f5223e4eb4f4e27cfe16af8,
       type: 2}
+    movementCost: 1
   - name: mountain
     tileVisualPrefab: {fileID: 1465037824773452, guid: d7c72b8e2c0d05a4b82668636b7d7858,
       type: 2}
+    movementCost: 99999999
   - name: swamp
     tileVisualPrefab: {fileID: 1644417256753480, guid: 44b1f23c5a733ce45821300ff501e962,
       type: 2}
-  tileWidth: 15
-  tileHeight: 11
-  gap: 0.1
+    movementCost: 2
+  playerUnits:
+  - {fileID: 1189588240}
+  - {fileID: 1411578719}
+  - {fileID: 1088683905}
 --- !u!4 &700908719
 Transform:
   m_ObjectHideFlags: 0
@@ -415,7 +418,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a0c411a72235d408f332a3e2bec968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: {fileID: 700908718}
   tileX: -13.3364
   tileZ: -6.6
   maxDistance: 3
@@ -521,7 +523,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a0c411a72235d408f332a3e2bec968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: {fileID: 700908718}
   tileX: -13.3364
   tileZ: -0.0000001788139
   maxDistance: 1
@@ -630,7 +631,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1389668859}
   m_LocalRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: -0.15, y: 17, z: -9}
+  m_LocalPosition: {x: -0.15, y: 14, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -788,7 +789,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9a0c411a72235d408f332a3e2bec968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: {fileID: 700908718}
   tileX: -13.3364
   tileZ: 6.6
   maxDistance: 2

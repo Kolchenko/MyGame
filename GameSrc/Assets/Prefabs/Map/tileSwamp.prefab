@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114424867430515042}
   - component: {fileID: 114534636671288868}
   - component: {fileID: 65719899916830952}
+  - component: {fileID: 114807232729360418}
   m_Layer: 0
   m_Name: tileSwamp
   m_TagString: Untagged
@@ -38,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1644417256753480}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.9525995, y: 0, z: -8.25}
   m_LocalScale: {x: 0.9969486, y: 0.9969485, z: 0.09969488}
   m_Children: []
   m_Father: {fileID: 0}
@@ -118,5 +119,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: abf341078f783b545be6b41c510cbea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileX: 0
+  tileY: 0
+--- !u!114 &114807232729360418
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1644417256753480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 212f87f215d908f40b7c15c8ba855896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -22,8 +22,9 @@ GameObject:
   - component: {fileID: 33497147232880904}
   - component: {fileID: 23415450172467674}
   - component: {fileID: 114225986630422202}
-  - component: {fileID: 114993666231493990}
   - component: {fileID: 65357850388423056}
+  - component: {fileID: 114030840649438978}
+  - component: {fileID: 114906245451979778}
   m_Layer: 0
   m_Name: tileGrass
   m_TagString: Untagged
@@ -38,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1823034527796484}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 12.3838005, y: 0, z: -8.25}
   m_LocalScale: {x: 0.9969486, y: 0.9969485, z: 0.09969488}
   m_Children: []
   m_Father: {fileID: 0}
@@ -97,6 +98,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.7320498, y: 2.0000005, z: 2.0000005}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114030840649438978
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1823034527796484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf341078f783b545be6b41c510cbea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileX: 0
+  tileY: 0
 --- !u!114 &114225986630422202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -109,7 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseOverColor: {r: 0.00886679, g: 0.60294116, b: 0.3086543, a: 1}
---- !u!114 &114993666231493990
+--- !u!114 &114906245451979778
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -117,6 +131,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1823034527796484}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abf341078f783b545be6b41c510cbea4, type: 3}
+  m_Script: {fileID: 11500000, guid: 212f87f215d908f40b7c15c8ba855896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
