@@ -20,9 +20,9 @@ public class TileMap : MonoBehaviour
     Vector3 startPos;
 
     public TileType[] tileTypes;
-    Node[,] graph;
+    public Node[,] graph;
     List<Node> currentPath = null;
-    int[,] tiles;
+    public int[,] tiles;
 
     void Start()
     {
@@ -355,10 +355,13 @@ public class TileMap : MonoBehaviour
         return true;
     }    
 
-    public List<Node> getNeighboursByUnitPos(Vector2 unitPos)
-    {
-        return graph[(int)unitPos.x, (int)unitPos.y].neighbours;
-    }
+    //public int[,] getAvailableTilesByUnitPos(Vector2 unitPos)
+    //{
+    //    int unitDistance = selectedUnit.maxDistance;
+
+    //    for (int i = 0;)
+        
+    //}
 
     int CostToEnterTile(int x, int y)
     {
