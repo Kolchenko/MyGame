@@ -10,7 +10,8 @@ public class Unit : MonoBehaviour {
     public List<Node> currentPath;
 
     Color startColor;
-    public Color mouseOverColor;
+    public Color availableTileColor;
+    public List<Node> availableMovementTiles = null;
 
     private void OnMouseUp()
     {
@@ -28,8 +29,7 @@ public class Unit : MonoBehaviour {
             }
 
             Vector2 unitPosition = map.GetTileCoordinatesByWorldPosition(new Vector3(tileX, 0, tileZ));
-            //int[,] availableTiles = map.getAvailableTilesByUnitPos(unitPosition);
-            List<Node> availableMovementTiles = new List<Node>();
+            availableMovementTiles = new List<Node>();
             Node currentTile = map.graph[(int)unitPosition.x, (int)unitPosition.y];
             GetAvailableMovementTiles(availableMovementTiles, currentTile);
 
@@ -37,17 +37,24 @@ public class Unit : MonoBehaviour {
             {
                 Collider[] colliders;
                 Vector3 tileWorldPos = map.CalcWorldPos(new Vector2(item.x, item.y));
-                colliders = Physics.OverlapSphere(tileWorldPos, 0.125f /* Radius */);
+                colliders = Physics.OverlapSphere(tileWorldPos, 0.125f /*Radius*/);
 
                 if (colliders.Length >= 1) 
                 {
                     foreach (var collider in colliders)
                     {
-                        var go = collider.gameObject; //This is the game object you collided with
+                        var go = collider.gameObject;
                         if (go.name.StartsWith("Hexagon"))
                         {
-                            startColor = go.GetComponent<Renderer>().material.GetColor("_Color");
-                            go.GetComponent<Tile>().Select(startColor, mouseOverColor);
+                            if (map.tiles[item.x, item.y] != 1 /*mountain*/)
+                            {
+                                startColor = go.GetComponent<Renderer>().material.GetColor("_Color");
+                                availableTileColor = startColor;
+                                //TODO: thinkabout  other variant of colorized tile
+                                availableTileColor.g = 0.6f;
+                                availableTileColor.b = 0.4f;
+                                go.GetComponent<Tile>().Select(startColor, availableTileColor);
+                            }
                         }
                     }
                 }
@@ -83,14 +90,19 @@ public class Unit : MonoBehaviour {
         {
             return;
         }
-
+        float y = transform.position.y;
         while (currentPath.Count != 1)
         {
             currentPath.RemoveAt(0);
-            transform.position = TileMap.Instance.CalcWorldPos(new Vector2(currentPath[0].x, currentPath[0].y));
+            Vector3 unitPos = TileMap.Instance.CalcWorldPos(new Vector2(currentPath[0].x, currentPath[0].y));
+            unitPos.y = y;
+            transform.position = unitPos;
         }
 
         currentPath = null;
+        UpdatePosition(transform.position.x, transform.position.z);
+        TileMap.Instance.DeselectUnit();
+        availableMovementTiles = null;
     }
 
     private void GetAvailableMovementTiles(List<Node> availableMovementTiles, Node startPos)
@@ -106,13 +118,14 @@ public class Unit : MonoBehaviour {
         
         List<Node> visitedTiles = new List<Node>();
         visitedTiles.Add(startPos);
+        availableMovementTiles.Add(startPos);
 
         while (burningTiles.Count != 0)
         {            
             Node currentVertex = burningTiles.Dequeue();
             foreach (var item in currentVertex.neighbours)
             {
-                if (!visitedTiles.Contains(item))
+                if (!visitedTiles.Contains(item) && map.tiles[item.x, item.y] != 1)
                 {
                     ++nextElementsToDepthIncrease;
                 }
@@ -128,7 +141,7 @@ public class Unit : MonoBehaviour {
             for (int i = 0; i < currentVertex.neighbours.Count; ++i)
             {
                 Node tile = currentVertex.neighbours[i];
-                if (!visitedTiles.Contains(tile))
+                if (!visitedTiles.Contains(tile) && map.tiles[tile.x, tile.y] != 1)
                 {
                     visitedTiles.Add(tile);
                     burningTiles.Enqueue(tile);
@@ -139,6 +152,56 @@ public class Unit : MonoBehaviour {
             if (currentDepth == maxDepth)
             {
                 return;
+            }
+        }
+    }
+
+    //helper
+    //public static Color ChangeColorBrightness(Color color, float correctionFactor)
+    //{
+    //    Color32 color32 = color;
+    //    float red = (float)color32.r;
+    //    float green = (float)color32.g;
+    //    float blue = (float)color32.b;
+
+    //    if (correctionFactor < 0)
+    //    {
+    //        correctionFactor *= 2;
+    //        red *= correctionFactor;
+    //        green *= correctionFactor;
+    //        blue *= correctionFactor;
+    //    }
+    //    else
+    //    {
+    //        red = (1.0f - red) * correctionFactor + red;
+    //        green = (1.0f - green) * correctionFactor + green;
+    //        blue = (1.0f - blue) * correctionFactor + blue;
+    //    }
+    //    color = new Color32((byte)color32.a, (byte)red, (byte)green, (byte)blue);
+    //    return color;
+    //}
+
+    public void DeselecteAvailableTile()
+    {
+        foreach (var item in availableMovementTiles)
+        {
+            Collider[] colliders;
+            Vector3 tileWorldPos = TileMap.Instance.CalcWorldPos(new Vector2(item.x, item.y));
+            colliders = Physics.OverlapSphere(tileWorldPos, 0.125f /*Radius*/);
+
+            if (colliders.Length >= 1)
+            {
+                foreach (var collider in colliders)
+                {
+                    var go = collider.gameObject;
+                    if (go.name.StartsWith("Hexagon"))
+                    {
+                        if (TileMap.Instance.tiles[item.x, item.y] != 1 /*mountain*/)
+                        {
+                            go.GetComponent<Tile>().Deselect(startColor);
+                        }
+                    }
+                }
             }
         }
     }

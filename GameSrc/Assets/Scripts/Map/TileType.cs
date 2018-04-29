@@ -7,6 +7,7 @@ public class TileType
     public string name;
     public GameObject tileVisualPrefab;
     public int movementCost;
+    public Color originalColor;
 
     public static int GetTileTypeByTileName(string name)
     {
@@ -17,10 +18,6 @@ public class TileType
         else if (name == "mountain")
         {
             return 1;
-        }
-        else if (name == "swamp")
-        {
-            return 2;
         }
 
         return 0;

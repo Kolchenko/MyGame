@@ -21,7 +21,7 @@ public class Tile : MonoBehaviour {
     }
 
     public void Select(Color startColor, Color mouseOverColor)
-    {        
+    {
         GetComponent<Renderer>().material.SetColor("_Color", mouseOverColor);
     }
 

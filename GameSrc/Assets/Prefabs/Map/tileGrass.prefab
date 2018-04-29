@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecd069c36893c0e4da8492cbd454ea48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseOverColor: {r: 0.00886679, g: 0.60294116, b: 0.3086543, a: 1}
+  mouseOverColor: {r: 0.00886679, g: 0.284, b: 0.3086543, a: 1}
 --- !u!114 &114906245451979778
 MonoBehaviour:
   m_ObjectHideFlags: 1

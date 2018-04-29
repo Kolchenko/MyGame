@@ -62,10 +62,10 @@ public class TileMap : MonoBehaviour
         if ((int)tileWorldPos.x % 2 != 0)
             offset = hexWidth / 2;
 
-        float x = (tileWorldPos.x - startPos.x - offset) / hexWidth;
+        float x = (float)((Math.Round(tileWorldPos.x) - startPos.x - offset) / hexWidth);
         float z = (tileWorldPos.z - startPos.z) / (hexHeight * 0.75f) * (-1.0f);
-
-        return new Vector2((int)x, (int)z);
+        
+        return new Vector2((int)Math.Round(x), (int)Math.Round(z));
     }
 
     void CreateTile()
@@ -76,9 +76,7 @@ public class TileMap : MonoBehaviour
 
     void CreateTileMap()
     {
-        const int swampLimit = 7;
-        const int mountainLimit = 4;
-        int countSwampTile = 0;
+        const int mountainLimit = 6;
         int countMountainTile = 0;
         System.Random rand = new System.Random();
         tiles = new int[width, height];
@@ -99,11 +97,6 @@ public class TileMap : MonoBehaviour
                 {
                     tt = tileTypes[1];
                     ++countMountainTile;
-                }
-                else if (tileType == 2 && countSwampTile != swampLimit)
-                {
-                    tt = tileTypes[2];
-                    ++countSwampTile;
                 }
                 else
                 {
@@ -236,16 +229,21 @@ public class TileMap : MonoBehaviour
 
     public void SelectUnit(Unit unit)
     {
-        selectedUnit = unit;
-        startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
-        selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
+        if (unit != null)
+        {
+            selectedUnit = unit;
+            startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
+            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
+        }
     }
+
     public void DeselectUnit()
     {
         if (selectedUnit != null)
         {
             selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
-            selectedUnit = null;
+            selectedUnit.DeselecteAvailableTile();
+            selectedUnit = null;            
         }
     }
 
@@ -262,83 +260,75 @@ public class TileMap : MonoBehaviour
         Node source = graph[(int)sourceLocalPos.x, (int)sourceLocalPos.y];
         Node target = graph[(int)targetLocalPos.x, (int)targetLocalPos.y];
 
-
-        dist[source] = 0;
-        prev[source] = null;
-
-        foreach (var vertex in graph)
+        if (selectedUnit.availableMovementTiles.Contains(target))
         {
-            if (vertex != source)
-            {
-                dist[vertex] = Mathf.Infinity;
-                prev[vertex] = null;
-            }
-            unvisited.Add(vertex);
-        }
 
-        while (unvisited.Count > 0)
-        {
-            Node u = null;
+            dist[source] = 0;
+            prev[source] = null;
 
-            foreach (var possibleU in unvisited)
+            foreach (var vertex in graph)
             {
-                if (u == null || dist[u] > dist[possibleU])
+                if (vertex != source)
                 {
-                    u = possibleU;
+                    dist[vertex] = Mathf.Infinity;
+                    prev[vertex] = null;
+                }
+                unvisited.Add(vertex);
+            }
+
+            while (unvisited.Count > 0)
+            {
+                Node u = null;
+
+                foreach (var possibleU in unvisited)
+                {
+                    if (u == null || dist[u] > dist[possibleU])
+                    {
+                        u = possibleU;
+                    }
+                }
+
+                if (u == target)
+                {
+                    break;
+                }
+
+                unvisited.Remove(u);
+
+                foreach (var v in u.neighbours)
+                {
+                    //float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
+                    float alt = dist[u] + CostToEnterTile(v.x, v.y);
+                    if (alt < dist[v])
+                    {
+                        dist[v] = alt;
+                        prev[v] = u;
+                    }
                 }
             }
 
-            if (u == target)
+            if (prev[target] == null)
             {
-                break;
+                //No route between source and target
+                return;
             }
-
-            unvisited.Remove(u);
-
-            foreach (var v in u.neighbours)
+            else
             {
-                //float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
-                float alt = dist[u] + CostToEnterTile(v.x, v.y);
-                if (alt < dist[v])
+                currentPath = new List<Node>();
+                Node currentTile = target;
+
+                while (currentTile != null)
                 {
-                    dist[v] = alt;
-                    prev[v] = u;
+                    currentPath.Add(currentTile);
+                    currentTile = prev[currentTile];
                 }
+
+                currentPath.Reverse();
+                selectedUnit.currentPath = currentPath;
             }
         }
-
-        if (prev[target] == null)
-        {
-            //No route between source and target
-            return;
-        }
-        else
-        {
-            currentPath = new List<Node>();
-            Node currentTile = target;
-
-            while (currentTile != null)
-            {
-                currentPath.Add(currentTile);
-                currentTile = prev[currentTile];
-            }
-
-            currentPath.Reverse();
-            selectedUnit.currentPath = currentPath;
-        }
     }
-
-    public void MoveSelectedUnitTo(float x, float z)
-    {
-        if (selectedUnit != null && isEmptyTile(x, z))
-        {
-            //selectedUnit.transform.position = new Vector3(x, selectedUnit.transform.position.y, z);  
-            
-            selectedUnit.UpdatePosition(x, z);
-            DeselectUnit();
-        }
-    }
-
+    
     private bool isEmptyTile(float x, float z)
     {
         foreach (var item in playerUnits)
@@ -354,14 +344,6 @@ public class TileMap : MonoBehaviour
 
         return true;
     }    
-
-    //public int[,] getAvailableTilesByUnitPos(Vector2 unitPos)
-    //{
-    //    int unitDistance = selectedUnit.maxDistance;
-
-    //    for (int i = 0;)
-        
-    //}
 
     int CostToEnterTile(int x, int y)
     {
