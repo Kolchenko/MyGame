@@ -6,7 +6,11 @@ using UnityEngine;
 public class Unit : MonoBehaviour {
     public float tileX;
     public float tileZ;
+
     public int maxDistance;
+    public int damage;
+    public int defense;
+
     public List<Node> currentPath;
 
     Color startColor;
@@ -120,6 +124,14 @@ public class Unit : MonoBehaviour {
         visitedTiles.Add(startPos);
         availableMovementTiles.Add(startPos);
 
+        // check other units pos
+        foreach (var item in map.playerUnits)
+        {
+            Vector2 unitPosition = map.GetTileCoordinatesByWorldPosition(new Vector3(item.tileX, 0, item.tileZ));
+            Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
+            visitedTiles.Add(currentTileWithUnit);
+        }
+
         while (burningTiles.Count != 0)
         {            
             Node currentVertex = burningTiles.Dequeue();
@@ -140,8 +152,8 @@ public class Unit : MonoBehaviour {
 
             for (int i = 0; i < currentVertex.neighbours.Count; ++i)
             {
-                Node tile = currentVertex.neighbours[i];
-                if (!visitedTiles.Contains(tile) && map.tiles[tile.x, tile.y] != 1)
+                Node tile = currentVertex.neighbours[i];                
+                if (!visitedTiles.Contains(tile) && map.tiles[tile.x, tile.y] != 1 /*mountain*/)
                 {
                     visitedTiles.Add(tile);
                     burningTiles.Enqueue(tile);
@@ -155,31 +167,6 @@ public class Unit : MonoBehaviour {
             }
         }
     }
-
-    //helper
-    //public static Color ChangeColorBrightness(Color color, float correctionFactor)
-    //{
-    //    Color32 color32 = color;
-    //    float red = (float)color32.r;
-    //    float green = (float)color32.g;
-    //    float blue = (float)color32.b;
-
-    //    if (correctionFactor < 0)
-    //    {
-    //        correctionFactor *= 2;
-    //        red *= correctionFactor;
-    //        green *= correctionFactor;
-    //        blue *= correctionFactor;
-    //    }
-    //    else
-    //    {
-    //        red = (1.0f - red) * correctionFactor + red;
-    //        green = (1.0f - green) * correctionFactor + green;
-    //        blue = (1.0f - blue) * correctionFactor + blue;
-    //    }
-    //    color = new Color32((byte)color32.a, (byte)red, (byte)green, (byte)blue);
-    //    return color;
-    //}
 
     public void DeselecteAvailableTile()
     {

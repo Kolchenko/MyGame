@@ -419,6 +419,8 @@ MonoBehaviour:
   tileX: -13.3364
   tileZ: -6.6
   maxDistance: 3
+  damage: 8
+  defense: 6
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1189588235
 GameObject:
@@ -525,6 +527,8 @@ MonoBehaviour:
   tileX: -13.3364
   tileZ: -0.0000001788139
   maxDistance: 1
+  damage: 2
+  defense: 3
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1286356728
 GameObject:
@@ -792,6 +796,8 @@ MonoBehaviour:
   tileX: -13.3364
   tileZ: 6.6
   maxDistance: 2
+  damage: 3
+  defense: 4
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1433814715
 GameObject:
