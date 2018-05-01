@@ -8,10 +8,10 @@ public class ClickableTile : MonoBehaviour {
 
     private void OnMouseUp()
     {
-        if (TileMap.selectedUnit != null)
+        if (BoardManager.selectedUnit != null)
         {
-            TileMap.Instance.GeneratePathTo(tileX, tileY);
-            TileMap.selectedUnit.MoveToEnterTile();
+            BoardManager.Instance.GeneratePathTo(tileX, tileY);
+            BoardManager.selectedUnit.MoveToEnterTile();
         }
     }
 }

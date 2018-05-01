@@ -5,31 +5,30 @@ using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
-    public static TileMap Instance { get; private set; }
-
-    public void Awake()
-    {
-        Instance = this;
-    }
-
     public int width = 15;
     public int height = 11;
     public float gap = 0.1f;
-    float hexWidth = 1.732f;
-    float hexHeight = 2.0f;
-    Vector3 startPos;
+    public static float hexWidth = 1.732f;
+    public static float hexHeight = 2.0f;
+    public static Vector3 startPos;
 
     public TileType[] tileTypes;
-    public Node[,] graph;
-    List<Node> currentPath = null;
+    public Node[,] graph;    
     public int[,] tiles;
 
     void Start()
     {
-        CreateTile();
+        Debug.Log("TileMapStart");
+        AddGap();
         CalcStartPos();
         CreateTileMap();
         GeneratePathfindingGraph();
+    }
+
+    void AddGap()
+    {
+        hexWidth += hexWidth * gap;
+        hexHeight += hexHeight * gap;
     }
 
     void CalcStartPos()
@@ -42,36 +41,6 @@ public class TileMap : MonoBehaviour
         float z = hexHeight * 0.75f * (height / 2);
 
         startPos = new Vector3(x, 0, z);
-    }
-
-    public Vector3 CalcWorldPos(Vector2 tilePos)
-    {
-        float offset = 0;
-        if (tilePos.y % 2 != 0)
-            offset = hexWidth / 2;
-
-        float x = startPos.x + tilePos.x * hexWidth + offset;
-        float z = startPos.z - tilePos.y * hexHeight * 0.75f;
-
-        return new Vector3(x, 0, z);
-    }
-
-    public Vector2 GetTileCoordinatesByWorldPosition(Vector3 tileWorldPos)
-    {
-        float offset = 0;
-        if ((int)tileWorldPos.x % 2 != 0)
-            offset = hexWidth / 2;
-
-        float x = (float)((Math.Round(tileWorldPos.x) - startPos.x - offset) / hexWidth);
-        float z = (tileWorldPos.z - startPos.z) / (hexHeight * 0.75f) * (-1.0f);
-        
-        return new Vector2((int)Math.Round(x), (int)Math.Round(z));
-    }
-
-    void CreateTile()
-    {
-        hexWidth += hexWidth * gap;
-        hexHeight += hexHeight * gap;
     }
 
     void CreateTileMap()
@@ -106,7 +75,7 @@ public class TileMap : MonoBehaviour
 
                 Tile currentTile = new GameObject().AddComponent<Tile>();
                 Vector2 tilePos = new Vector2(x, y);
-                currentTile.Create(tt.tileVisualPrefab.transform, tilePos);
+                currentTile.Create(tt.tileVisualPrefab.transform, tilePos, this);
                 tiles[x, y] = TileType.GetTileTypeByTileName(tt.name);
             }
         }
@@ -219,133 +188,8 @@ public class TileMap : MonoBehaviour
             }
         }
     }
-
-    //---------------------------------UNIT---------------------------------------------
-
-    public Unit[] playerUnits;
-    static public Unit selectedUnit;
-    static Color startPlayerColor;
-    static Color selectedPlayerColor = new Color(0.1f, 0.1f, 0.9f);
-
-    public void SelectUnit(Unit unit)
-    {
-        if (unit != null)
-        {
-            selectedUnit = unit;
-            startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
-            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
-        }
-    }
-
-    public void DeselectUnit()
-    {
-        if (selectedUnit != null)
-        {
-            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
-            selectedUnit.DeselecteAvailableTile();
-            selectedUnit = null;            
-        }
-    }
-
-    public void GeneratePathTo(float x, float z)
-    {
-        selectedUnit.currentPath = null;
-        Dictionary<Node, float> dist = new Dictionary<Node, float>();
-        Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
-        List<Node> unvisited = new List<Node>();
-
-        Vector2 sourceLocalPos = GetTileCoordinatesByWorldPosition(new Vector3(selectedUnit.tileX, 0, selectedUnit.tileZ));
-        Vector2 targetLocalPos = GetTileCoordinatesByWorldPosition(new Vector3(x, 0, z));
-
-        Node source = graph[(int)sourceLocalPos.x, (int)sourceLocalPos.y];
-        Node target = graph[(int)targetLocalPos.x, (int)targetLocalPos.y];
-
-        if (selectedUnit.availableMovementTiles.Contains(target))
-        {
-
-            dist[source] = 0;
-            prev[source] = null;
-
-            foreach (var vertex in graph)
-            {
-                if (vertex != source)
-                {
-                    dist[vertex] = Mathf.Infinity;
-                    prev[vertex] = null;
-                }
-                unvisited.Add(vertex);
-            }
-
-            while (unvisited.Count > 0)
-            {
-                Node u = null;
-
-                foreach (var possibleU in unvisited)
-                {
-                    if (u == null || dist[u] > dist[possibleU])
-                    {
-                        u = possibleU;
-                    }
-                }
-
-                if (u == target)
-                {
-                    break;
-                }
-
-                unvisited.Remove(u);
-
-                foreach (var v in u.neighbours)
-                {
-                    //float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
-                    float alt = dist[u] + CostToEnterTile(v.x, v.y);
-                    if (alt < dist[v])
-                    {
-                        dist[v] = alt;
-                        prev[v] = u;
-                    }
-                }
-            }
-
-            if (prev[target] == null)
-            {
-                //No route between source and target
-                return;
-            }
-            else
-            {
-                currentPath = new List<Node>();
-                Node currentTile = target;
-
-                while (currentTile != null)
-                {
-                    currentPath.Add(currentTile);
-                    currentTile = prev[currentTile];
-                }
-
-                currentPath.Reverse();
-                selectedUnit.currentPath = currentPath;
-            }
-        }
-    }
-    
-    private bool isEmptyTile(float x, float z)
-    {
-        foreach (var item in playerUnits)
-        {
-            if ((int)item.tileX == (int)x && (int)item.tileZ == (int)z)
-            {
-                if (item.tileX * x > 0)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }    
-
-    int CostToEnterTile(int x, int y)
+ 
+    public int CostToEnterTile(int x, int y)
     {
         return tileTypes[tiles[x, y]].movementCost;
     }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour {
-    public void Create(Transform hex, Vector2 position)
+    public void Create(Transform hex, Vector2 position, TileMap map)
     {
         Transform tile = Instantiate(hex) as Transform;
 
-        tile.position = TileMap.Instance.CalcWorldPos(position);
-        tile.parent = TileMap.Instance.transform;
+        tile.position = PositionConverter.ToWorldCoordinates(position);
+        tile.parent = map.transform;
         tile.name = "Hexagon" + position.x + "|" + position.y;
 
         ClickableTile ct;
