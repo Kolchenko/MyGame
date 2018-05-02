@@ -72,10 +72,23 @@ public class TileMap : MonoBehaviour
                     tt = tileTypes[0];
                 }
                 #endregion
-
-                Tile currentTile = new GameObject().AddComponent<Tile>();
+                
                 Vector2 tilePos = new Vector2(x, y);
-                currentTile.Create(tt.tileVisualPrefab.transform, tilePos, this);
+
+                Transform tile = Instantiate(tt.tileVisualPrefab.transform) as Transform;
+
+                tile.position = PositionConverter.ToWorldCoordinates(tilePos);
+                tile.parent = transform;
+                tile.name = "Hexagon" + tilePos.x + "|" + tilePos.y;
+
+                ClickableTile ct;
+                if (tile.GetComponent<ClickableTile>() != null)
+                {
+                    ct = tile.GetComponent<ClickableTile>();
+                    ct.tileX = tile.position.x;
+                    ct.tileY = tile.position.z;
+                }
+
                 tiles[x, y] = TileType.GetTileTypeByTileName(tt.name);
             }
         }

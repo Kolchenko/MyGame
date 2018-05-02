@@ -145,6 +145,14 @@ public class BoardManager : MonoBehaviour {
             visitedTiles.Add(currentTileWithUnit);
         }
 
+        // check other AI units pos
+        foreach (var item in BoardManager.Instance.aiUnits)
+        {
+            Vector2 unitPosition = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+            Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
+            visitedTiles.Add(currentTileWithUnit);
+        }
+
         while (burningTiles.Count != 0)
         {
             Node currentVertex = burningTiles.Dequeue();
@@ -198,7 +206,7 @@ public class BoardManager : MonoBehaviour {
                     {
                         if (map.tiles[item.x, item.y] != 1 /*mountain*/)
                         {
-                            go.GetComponent<Tile>().Deselect(selectedUnit.startColor);
+                            GameObjectHighlighter.Deselect(selectedUnit.startColor, go.GetComponent<Renderer>());
                         }
                     }
                 }

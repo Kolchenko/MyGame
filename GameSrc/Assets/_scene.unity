@@ -124,6 +124,7 @@ GameObject:
   - component: {fileID: 265169740}
   - component: {fileID: 265169739}
   - component: {fileID: 265169738}
+  - component: {fileID: 265169741}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -201,6 +202,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 1405346799}
   m_GameObject: {fileID: 265169736}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &265169741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 265169736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 346c106b568e57d4380da0571fd410a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileX: 13.3364
+  tileZ: -0.0000001788139
+  distance: 1
+  damage: 2
+  defense: 3
+  startColor: {r: 0, g: 0, b: 0, a: 0}
+  availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &562301485
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,9 +351,10 @@ MonoBehaviour:
   - {fileID: 1411578719}
   - {fileID: 1088683905}
   aiUnits:
-  - {fileID: 1286356730}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 265169741}
+  - {fileID: 1433814720}
+  - {fileID: 1510621067}
+  map: {fileID: 700908718}
 --- !u!1 &735295315
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,7 +540,6 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 2901cc851b14e4d459422a8932171dbe, type: 2}
-  - {fileID: 2100000, guid: 2901cc851b14e4d459422a8932171dbe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -588,7 +607,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1286356729}
-  - component: {fileID: 1286356730}
   m_Layer: 0
   m_Name: SpearmanAI
   m_TagString: Untagged
@@ -611,24 +629,6 @@ Transform:
   m_Father: {fileID: 600989660}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1286356730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1286356728}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 346c106b568e57d4380da0571fd410a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileX: 13.4
-  tileZ: 0
-  distance: 1
-  damage: 2
-  defense: 3
-  startColor: {r: 0, g: 0, b: 0, a: 0}
-  availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1389668859
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,7 +704,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1389668859}
   m_LocalRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: -0.15, y: 14, z: -8}
+  m_LocalPosition: {x: -0.15, y: 16, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -893,6 +893,7 @@ GameObject:
   - component: {fileID: 1433814719}
   - component: {fileID: 1433814718}
   - component: {fileID: 1433814717}
+  - component: {fileID: 1433814720}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -966,6 +967,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1433814715}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1433814720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1433814715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1a90a2c1b8cd64479b72b526118faa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileX: 13.4
+  tileZ: 6.6
+  distance: 2
+  damage: 3
+  defense: 4
+  startColor: {r: 0, g: 0, b: 0, a: 0}
+  availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1510621062
 GameObject:
   m_ObjectHideFlags: 0
@@ -977,6 +996,7 @@ GameObject:
   - component: {fileID: 1510621066}
   - component: {fileID: 1510621065}
   - component: {fileID: 1510621064}
+  - component: {fileID: 1510621067}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -1051,6 +1071,24 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1510621062}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1510621067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1510621062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc8b58dcaa655bc44b38acd3fa21bf49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileX: 13.4
+  tileZ: -6.6
+  distance: 3
+  damage: 8
+  defense: 6
+  startColor: {r: 0, g: 0, b: 0, a: 0}
+  availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1586214115
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public abstract class Unit : MonoBehaviour {
+public class Unit : MonoBehaviour {
     public float tileX;
     public float tileZ;
 
@@ -59,7 +59,7 @@ public abstract class Unit : MonoBehaviour {
                                 //TODO: think about  other variant of colorized tile
                                 availableTileColor.g = 0.6f;
                                 availableTileColor.b = 0.4f;
-                                go.GetComponent<Tile>().Select(startColor, availableTileColor);
+                                GameObjectHighlighter.Select(startColor, availableTileColor, go.GetComponent<Renderer>());
                             }
                         }
                     }

@@ -9,11 +9,11 @@ public class MouseMoveableTile : MonoBehaviour {
     private void OnMouseEnter()
     {
         startColor = GetComponent<Renderer>().material.GetColor("_Color");
-        GetComponent<Tile>().Select(startColor, mouseOverColor);
+        GameObjectHighlighter.Select(startColor, mouseOverColor, GetComponent<Renderer>());
     }
 
     private void OnMouseExit()
     {
-        GetComponent<Tile>().Deselect(startColor);
+        GameObjectHighlighter.Deselect(startColor, GetComponent<Renderer>());
     }
 }
