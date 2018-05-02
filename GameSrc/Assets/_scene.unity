@@ -258,7 +258,7 @@ GameObject:
   m_Component:
   - component: {fileID: 600989660}
   m_Layer: 0
-  m_Name: AIUnits
+  m_Name: EnemyUnits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -608,7 +608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1286356729}
   m_Layer: 0
-  m_Name: SpearmanAI
+  m_Name: Spearman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -764,7 +764,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1031867152926562, guid: 707ce8df75afd4546b7e080689663d16, type: 2}
       propertyPath: m_Name
-      value: SpearmanAI
+      value: Spearman
       objectReference: {fileID: 0}
     - target: {fileID: 23166531707950972, guid: 707ce8df75afd4546b7e080689663d16,
         type: 2}
@@ -1098,7 +1098,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1586214116}
   m_Layer: 0
-  m_Name: BowmanAI
+  m_Name: Bowman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
