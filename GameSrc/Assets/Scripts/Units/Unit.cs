@@ -76,22 +76,8 @@ public class Unit : MonoBehaviour {
 
     public void MoveToEnterTile()
     {
-        if (currentPath == null)
-        {
-            return;
-        }
-        float y = transform.position.y;
-        while (currentPath.Count != 1)
-        {
-            currentPath.RemoveAt(0);
-            Vector3 unitPos = PositionConverter.ToWorldCoordinates(new Vector2(currentPath[0].x, currentPath[0].y));
-            unitPos.y = y;
-            transform.position = unitPos;
-        }
-
-        currentPath = null;
-        UpdatePosition(transform.position.x, transform.position.z);
-        BoardManager.Instance.DeselectUnit();
-        availableMovementTiles = null;
+        Vector3 moveTo = PositionConverter.ToWorldCoordinates(new Vector2(currentPath[currentPath.Count - 1].x, currentPath[currentPath.Count - 1].y));
+        moveTo.y = transform.position.y;
+        StartCoroutine(MoveObject.MoveUnit(moveTo));
     }
 }
