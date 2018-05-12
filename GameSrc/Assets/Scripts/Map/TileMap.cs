@@ -81,10 +81,10 @@ public class TileMap : MonoBehaviour
                 tile.parent = transform;
                 tile.name = "Hexagon" + tilePos.x + "|" + tilePos.y;
 
-                ClickableTile ct;
-                if (tile.GetComponent<ClickableTile>() != null)
+                ClickableAvailableTile ct;
+                if (tile.GetComponent<ClickableAvailableTile>() != null)
                 {
-                    ct = tile.GetComponent<ClickableTile>();
+                    ct = tile.GetComponent<ClickableAvailableTile>();
                     ct.tileX = tile.position.x;
                     ct.tileY = tile.position.z;
                 }

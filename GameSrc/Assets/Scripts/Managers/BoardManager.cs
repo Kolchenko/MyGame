@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour {
     public Unit[] playerUnits;
-    public Unit[] aiUnits;
+    public Unit[] enemyUnits;
 
     static public Unit selectedUnit;
     static Color startPlayerColor;
@@ -35,8 +35,8 @@ public class BoardManager : MonoBehaviour {
     {
         if (selectedUnit != null)
         {
-            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
             DeselecteAvailableTile();
+            selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", startPlayerColor);
             selectedUnit = null;
         }
     }
@@ -56,7 +56,6 @@ public class BoardManager : MonoBehaviour {
 
         if (selectedUnit.availableMovementTiles.Contains(target))
         {
-
             dist[source] = 0;
             prev[source] = null;
 
@@ -138,7 +137,7 @@ public class BoardManager : MonoBehaviour {
         availableMovementTiles.Add(startPos);
 
         // check other player units pos
-        foreach (var item in BoardManager.Instance.playerUnits)
+        foreach (var item in Instance.playerUnits)
         {
             Vector2 unitPosition = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
             Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
@@ -146,7 +145,7 @@ public class BoardManager : MonoBehaviour {
         }
 
         // check other AI units pos
-        foreach (var item in BoardManager.Instance.aiUnits)
+        foreach (var item in Instance.enemyUnits)
         {
             Vector2 unitPosition = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
             Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
@@ -206,12 +205,19 @@ public class BoardManager : MonoBehaviour {
                     {
                         if (map.tiles[item.x, item.y] != 1 /*mountain*/)
                         {
-                            GameObjectHighlighter.Deselect(selectedUnit.startColor, go.GetComponent<Renderer>());
+                            var renderer = go.GetComponent<Renderer>();
+                            var col = renderer.material.color;
+                            GameObjectHighlighter.Deselect(selectedUnit.startColor, renderer);
                         }
                     }
                 }
             }
         }
+    }
+
+    public bool isAvailableClickedTile(Node tile)
+    {
+        return selectedUnit.availableMovementTiles.Contains(tile);
     }
 
 }

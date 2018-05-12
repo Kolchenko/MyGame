@@ -3,11 +3,8 @@ using System.Collections;
 
 public class MoveObject : MonoBehaviour
 {
-    public static bool IsMoving = false;
-
     public static IEnumerator MoveUnit(Vector3 moveTo)
     {
-        IsMoving = true;
         Unit unit = BoardManager.selectedUnit;
 
         while (unit.transform.position != moveTo)
@@ -25,8 +22,6 @@ public class MoveObject : MonoBehaviour
 
         unit.currentPath = null;
         unit.UpdatePosition(moveTo.x, moveTo.z);
-        BoardManager.Instance.DeselectUnit();
         unit.availableMovementTiles = null;
-        IsMoving = false;
     }
 }

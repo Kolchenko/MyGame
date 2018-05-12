@@ -350,7 +350,7 @@ MonoBehaviour:
   - {fileID: 1189588240}
   - {fileID: 1411578719}
   - {fileID: 1088683905}
-  aiUnits:
+  enemyUnits:
   - {fileID: 265169741}
   - {fileID: 1433814720}
   - {fileID: 1510621067}
