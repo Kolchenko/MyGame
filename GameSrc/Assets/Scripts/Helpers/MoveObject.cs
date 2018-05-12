@@ -20,7 +20,6 @@ public class MoveObject : MonoBehaviour
             }
         }
 
-        //unit.UpdatePosition(moveTo.x, moveTo.z);
         unit.currentPath = null;
         unit.availableMovementTiles = null;
     }

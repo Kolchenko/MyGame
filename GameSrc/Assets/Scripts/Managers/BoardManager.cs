@@ -61,6 +61,7 @@ public class BoardManager : MonoBehaviour {
 
             foreach (var vertex in map.graph)
             {
+
                 if (vertex != source)
                 {
                     dist[vertex] = Mathf.Infinity;
@@ -90,12 +91,15 @@ public class BoardManager : MonoBehaviour {
 
                 foreach (var v in u.neighbours)
                 {
-                    //float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
-                    float alt = dist[u] + map.CostToEnterTile(v.x, v.y);
-                    if (alt < dist[v])
+                    if (selectedUnit.availableMovementTiles.Contains(v))
                     {
-                        dist[v] = alt;
-                        prev[v] = u;
+                        //float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
+                        float alt = dist[u] + map.CostToEnterTile(v.x, v.y);
+                        if (alt < dist[v])
+                        {
+                            dist[v] = alt;
+                            prev[v] = u;
+                        }
                     }
                 }
             }
