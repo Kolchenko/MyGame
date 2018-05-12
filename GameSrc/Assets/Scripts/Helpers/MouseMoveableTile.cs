@@ -5,6 +5,7 @@ using UnityEngine;
 public class MouseMoveableTile : MonoBehaviour {
     Color startColor;
     public Color mouseOverColor;
+    public static bool isOnMouseUp = false;
 
     private void OnMouseEnter()
     {
@@ -14,6 +15,11 @@ public class MouseMoveableTile : MonoBehaviour {
 
     private void OnMouseExit()
     {
-        GameObjectHighlighter.Deselect(startColor, GetComponent<Renderer>());
+        // after click on the tile
+        if (!isOnMouseUp)
+        {
+            GameObjectHighlighter.Deselect(startColor, GetComponent<Renderer>());
+        }
+        isOnMouseUp = false;
     }
 }

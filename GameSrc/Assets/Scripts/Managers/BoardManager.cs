@@ -7,8 +7,8 @@ public class BoardManager : MonoBehaviour {
     public Unit[] enemyUnits;
 
     static public Unit selectedUnit;
-    static Color startPlayerColor;
-    static Color selectedPlayerColor = new Color(0.1f, 0.1f, 0.9f);
+    public static Color startPlayerColor;
+    public static Color selectedPlayerColor = new Color(0.1f, 0.1f, 0.9f);
     List<Node> currentPath = null;
     public TileMap map = null;
 
@@ -134,7 +134,7 @@ public class BoardManager : MonoBehaviour {
 
         List<Node> visitedTiles = new List<Node>();
         visitedTiles.Add(startPos);
-        availableMovementTiles.Add(startPos);
+        //availableMovementTiles.Add(startPos);
 
         // check other player units pos
         foreach (var item in Instance.playerUnits)
@@ -200,15 +200,10 @@ public class BoardManager : MonoBehaviour {
             {
                 foreach (var collider in colliders)
                 {
-                    var go = collider.gameObject;
-                    if (go.name.StartsWith("Hexagon"))
+                    var gameObject = collider.gameObject;
+                    if (map.tiles[item.x, item.y] != 1 /*mountain*/)
                     {
-                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
-                        {
-                            var renderer = go.GetComponent<Renderer>();
-                            var col = renderer.material.color;
-                            GameObjectHighlighter.Deselect(selectedUnit.startColor, renderer);
-                        }
+                        GameObjectHighlighter.Deselect(selectedUnit.startColor, gameObject.GetComponent<Renderer>());
                     }
                 }
             }

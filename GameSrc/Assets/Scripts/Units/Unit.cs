@@ -29,6 +29,7 @@ public class Unit : MonoBehaviour {
         {
             Vector3 moveTo = PositionConverter.ToWorldCoordinates(new Vector2(currentPath[currentPath.Count - 1].x, currentPath[currentPath.Count - 1].y));
             moveTo.y = transform.position.y;
+            UpdatePosition(moveTo.x, moveTo.z);
             StartCoroutine(MoveObject.MoveUnit(moveTo));
         }
     }
