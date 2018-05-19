@@ -16,7 +16,7 @@ public class MoveObject : MonoBehaviour
                 Vector3 newUnitPos = PositionConverter.ToWorldCoordinates(new Vector2(unit.currentPath[0].x, unit.currentPath[0].y));
                 newUnitPos.y = y;
                 unit.transform.position = newUnitPos;
-                yield return new WaitForSeconds(Time.deltaTime * 3); //todo: set time for each units
+                yield return new WaitForSeconds((float)(Time.deltaTime)); //todo: set time for each units
             }
         }
 

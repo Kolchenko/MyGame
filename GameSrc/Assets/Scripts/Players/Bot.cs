@@ -28,50 +28,100 @@ public class Bot {
         botTeam = BoardManager.Instance.enemyUnits.OfType<Unit>().ToList();
     }
 
+    bool isBotTeam = true;
+
     public void Do()
     {
-        MakeBestMove();
+        List<Node> startTeamPos = new List<Node>();
+        foreach (var unit in botTeam)
+        {
+            Vector2 unitLocalPos = PositionConverter.ToLocalCoordinates(new Vector3(unit.tileX, 0, unit.tileZ));
+            Node unitStartNode = BoardManager.Instance.map.graph[(int)unitLocalPos.x, (int)unitLocalPos.y];
+            startTeamPos.Add(unitStartNode);
+        }
+
+        var bestMove = MakeBestMove(startTeamPos, 2, isBotTeam);
+
+        for (int i = 0; i < botTeam.Count; ++i)
+        {
+            float y = botTeam[i].transform.position.y;
+            Vector3 unitWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(bestMove.Second[i].x, bestMove.Second[i].y));
+            unitWorldPos.y = y;
+            botTeam[i].transform.position = unitWorldPos;
+            botTeam[i].UpdatePosition(botTeam[i].transform.position.x, botTeam[i].transform.position.z);
+        }
+
         Turn.isHumanTurn = true;
     }
 
-    private void MakeBestMove()
+    float maxScore = Mathf.NegativeInfinity;
+    List<Node> bestTeamPos = new List<Node>();
+
+    private Pair<float, List<Node>> MakeBestMove(List<Node> teamPos, int depth, bool isBotTeam)
     {
-        Dictionary<Unit, List<Node>> availableMovementTilesByUnit = GetAllAvailableTeamMoves(botTeam);
+        if (depth == 0)
+        {
+            return GetHeuristicEvaluation(teamPos, isBotTeam);
+        }
+
+        isBotTeam = !isBotTeam;
+
+        List<List<Node>> allAvailableTeamMoves = new List<List<Node>>();
+        if (isBotTeam)
+        {
+            allAvailableTeamMoves = GetAllAvailableTeamMoves(botTeam);
+        }
+        else
+        {
+            allAvailableTeamMoves = GetAllAvailableTeamMoves(Human.humanTeam);
+        }
+
+        foreach (var teamPosition in allAvailableTeamMoves)
+        {
+            Pair<float, List<Node>> tmpResult = MakeBestMove(teamPosition, depth - 1, isBotTeam);
+            if (tmpResult.First > maxScore)
+            {
+                maxScore = tmpResult.First;
+                bestTeamPos = tmpResult.Second;
+            }
+        }
+
+        return new Pair<float, List<Node>>(maxScore, bestTeamPos);
+    }
+
+    private Pair<float, List<Node>> GetHeuristicEvaluation(List<Node> teamPosition, bool isBotTeam)
+    {
+        int value = 0;
+        foreach (var unitPosition in teamPosition)
+        {
+            value += BoardManager.Instance.map.width - unitPosition.x;
+        }
         
+        value = isBotTeam ? value : value * -1;
+        return new Pair<float, List<Node>> (value, teamPosition);
     }
 
-    private void ScoreCurrentUnitPos(List<Node> availableMoves)
-    {
 
-    }
+    #region get all moves
 
-    private float GetHeuristicEvaluation(Node node, bool isBotUnit)
+    private List<List<Node>> GetAllAvailableTeamMoves(List<Unit> team)
     {
-        //TODO: temporary evalute        
-        int x = BoardManager.Instance.map.width - node.x;
-        int value = isBotUnit ? x : x * -1;
-        return value;
-    }
-
-    private Dictionary<Unit, List<Node>> GetAllAvailableTeamMoves(List<Unit> team)
-    {
-        Dictionary<Unit, List<Node>> availableMovementTilesByUnit = new Dictionary<Unit, List<Node>>();
-        List<List<Node>> result = new List<List<Node>>();
+        List<List<Node>> allTeamMoves = new List<List<Node>>();
         foreach (var item in team)
         {
             BoardManager.selectedUnit = item;
             List<Node> moves = new List<Node>();
             Vector2 localPos = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
             BoardManager.Instance.GetAvailableMovementTiles(moves, BoardManager.Instance.map.graph[(int)localPos.x, (int)localPos.y]);
-            result.Add(moves);
+            allTeamMoves.Add(moves);
         }
 
-        var x = AllCombinationsOf(result);
+        List<List<Node>> allCombinationMoves = AllCombinationsOf(allTeamMoves);
 
-        return availableMovementTilesByUnit;
+        return allCombinationMoves;
     }
 
-    public static List<List<T>> AllCombinationsOf<T>(List<List<T>> sets)
+    private static List<List<T>> AllCombinationsOf<T>(List<List<T>> sets)
     {
         var combinations = new List<List<T>>();
 
@@ -93,4 +143,5 @@ public class Bot {
 
         return newCombinations.ToList();
     }
+    #endregion
 }
