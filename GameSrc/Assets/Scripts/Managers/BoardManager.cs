@@ -194,20 +194,23 @@ public class BoardManager : MonoBehaviour {
 
     public void DeselecteAvailableTile()
     {
-        foreach (var item in selectedUnit.availableMovementTiles)
+        if (selectedUnit.availableMovementTiles != null)
         {
-            Collider[] colliders;
-            Vector3 tileWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(item.x, item.y));
-            colliders = Physics.OverlapSphere(tileWorldPos, 0.125f /*Radius*/);
-
-            if (colliders.Length >= 1)
+            foreach (var item in selectedUnit.availableMovementTiles)
             {
-                foreach (var collider in colliders)
+                Collider[] colliders;
+                Vector3 tileWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(item.x, item.y));
+                colliders = Physics.OverlapSphere(tileWorldPos, 0.125f /*Radius*/);
+
+                if (colliders.Length >= 1)
                 {
-                    var gameObject = collider.gameObject;
-                    if (map.tiles[item.x, item.y] != 1 /*mountain*/)
+                    foreach (var collider in colliders)
                     {
-                        GameObjectHighlighter.Deselect(selectedUnit.startColor, gameObject.GetComponent<Renderer>());
+                        var gameObject = collider.gameObject;
+                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
+                        {
+                            GameObjectHighlighter.Deselect(selectedUnit.startColor, gameObject.GetComponent<Renderer>());
+                        }
                     }
                 }
             }

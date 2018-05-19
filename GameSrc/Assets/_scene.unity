@@ -215,6 +215,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileX: 13.3364
   tileZ: -0.0000001788139
+  isBotUnit: 1
   distance: 1
   damage: 2
   defense: 3
@@ -485,6 +486,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileX: -13.3364
   tileZ: -6.6
+  isBotUnit: 0
   distance: 3
   damage: 8
   defense: 6
@@ -593,6 +595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileX: -13.3364
   tileZ: -0.0000001788139
+  isBotUnit: 0
   distance: 1
   damage: 2
   defense: 3
@@ -877,6 +880,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileX: -13.3364
   tileZ: 6.6
+  isBotUnit: 0
   distance: 2
   damage: 3
   defense: 4
@@ -980,6 +984,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileX: 13.4
   tileZ: 6.6
+  isBotUnit: 1
   distance: 2
   damage: 3
   defense: 4
@@ -1084,6 +1089,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileX: 13.4
   tileZ: -6.6
+  isBotUnit: 1
   distance: 3
   damage: 8
   defense: 6

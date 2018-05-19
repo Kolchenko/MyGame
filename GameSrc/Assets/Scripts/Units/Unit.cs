@@ -6,7 +6,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour {
     public float tileX;
     public float tileZ;
-
+    public bool isBotUnit;
     public int distance;
     public int damage;
     public int defense;

@@ -6,18 +6,18 @@ using UnityEngine;
 
 public class Human {
 
-    public static List<Unit> units;
+    public static List<Unit> humanTeam;
 
     public Human()
     {
-        units = BoardManager.Instance.playerUnits.OfType<Unit>().ToList();
+        humanTeam = BoardManager.Instance.playerUnits.OfType<Unit>().ToList();
     }
 
     public static IEnumerator Do()
     {
-        units.OrderBy(dist => dist.distance);
+        humanTeam.OrderBy(dist => dist.distance);
 
-        foreach (var item in units)
+        foreach (var item in humanTeam)
         {
             item.SelectUnit();
             // todo: остальные юниты задизейблить совсем, мышь доступна только на выделенных тайлах
