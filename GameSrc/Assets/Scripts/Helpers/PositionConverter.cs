@@ -18,7 +18,7 @@ class PositionConverter
     public static Vector2 ToLocalCoordinates(Vector3 tilePos)
     {
         float offset = 0;
-        if ((int)tilePos.x % 2 != 0)
+        if ((int)tilePos.x % 2 == 0 && (int)tilePos.z % 3 != 0)
             offset = TileMap.hexWidth / 2;
 
         float x = (float)((Math.Round(tilePos.x) - TileMap.startPos.x - offset) / TileMap.hexWidth);

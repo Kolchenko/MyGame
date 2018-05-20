@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class TileMap : MonoBehaviour
 {
-    public int width = 15;
-    public int height = 11;
+    public int width = 11;
+    public int height = 9;
     public float gap = 0.1f;
     public static float hexWidth = 1.732f;
     public static float hexHeight = 2.0f;
@@ -59,7 +59,7 @@ public class TileMap : MonoBehaviour
                 int tileType = 0;
                 if (x > width / 3)
                 {
-                    tileType = rand.Next(3);
+                    tileType = rand.Next(2);
                 }
 
                 if (tileType == 1 && countMountainTile != mountainLimit)
