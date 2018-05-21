@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -40,64 +41,107 @@ public class Bot {
             startTeamPos.Add(unitStartNode);
         }
 
-        var bestMove = MakeBestMove(startTeamPos, 2, isBotTeam);
+        var bestMove = MakeBestMove(startTeamPos, 3 /*must be odd*/, isBotTeam, Mathf.NegativeInfinity, Mathf.Infinity);
 
-        for (int i = 0; i < botTeam.Count; ++i)
-        {
-            float y = botTeam[i].transform.position.y;
-            Vector3 unitWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(bestMove.Second[i].x, bestMove.Second[i].y));
-            unitWorldPos.y = y;
-            botTeam[i].transform.position = unitWorldPos;
-            botTeam[i].UpdatePosition(botTeam[i].transform.position.x, botTeam[i].transform.position.z);
-        }
+        UpdateTeamPosition(bestMove.Second, botTeam);
 
         Turn.isHumanTurn = true;
     }
 
-    float maxScore = Mathf.NegativeInfinity;
-    List<Node> bestTeamPos = new List<Node>();
-
-    private Pair<float, List<Node>> MakeBestMove(List<Node> teamPos, int depth, bool isBotTeam)
+    // Alpha-beta pruning
+    private Pair<float, List<Node>> MakeBestMove(List<Node> teamPos, int depth, bool isBotTeam, float alpha, float beta)
     {
+        Pair<float, List<Node>> bestMove = new Pair<float, List<Node>>();
         if (depth == 0)
         {
-            return GetHeuristicEvaluation(teamPos, isBotTeam);
+            return GetHeuristicEvaluation(teamPos);
         }
-
-        isBotTeam = !isBotTeam;
+        --depth;
 
         List<List<Node>> allAvailableTeamMoves = new List<List<Node>>();
+
         if (isBotTeam)
         {
-            allAvailableTeamMoves = GetAllAvailableTeamMoves(botTeam);
+            bestMove.First = Mathf.NegativeInfinity;
+            allAvailableTeamMoves = GetAllAvailableTeamMoves(botTeam); //todo: check null
+
+            List<Node> oldTeamPosition = new List<Node>();
+            foreach (var item in botTeam)
+            {
+                Vector2 localPos = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+                oldTeamPosition.Add(BoardManager.Instance.map.graph[(int)localPos.x, (int)localPos.y]);
+            }
+
+            foreach (var teamPosition in allAvailableTeamMoves)
+            {
+                UpdateTeamPosition(teamPosition, botTeam);
+                Pair<float, List<Node>> tmpResult = MakeBestMove(teamPosition, depth, false, alpha, beta);
+                UpdateTeamPosition(oldTeamPosition, botTeam);
+                if (tmpResult.First > bestMove.First)
+                {
+                    bestMove.First = tmpResult.First;
+                    bestMove.Second = teamPosition;
+                }
+                alpha = Mathf.Max(alpha, bestMove.First);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return bestMove;
         }
         else
         {
+            bestMove.First = Mathf.Infinity;
             allAvailableTeamMoves = GetAllAvailableTeamMoves(Human.humanTeam);
-        }
 
-        foreach (var teamPosition in allAvailableTeamMoves)
-        {
-            Pair<float, List<Node>> tmpResult = MakeBestMove(teamPosition, depth - 1, isBotTeam);
-            if (tmpResult.First > maxScore)
+            List<Node> oldTeamPosition = new List<Node>();
+            foreach (var item in Human.humanTeam)
             {
-                maxScore = tmpResult.First;
-                bestTeamPos = tmpResult.Second;
+                Vector2 localPos = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+                oldTeamPosition.Add(BoardManager.Instance.map.graph[(int)localPos.x, (int)localPos.y]);
             }
-        }
 
-        return new Pair<float, List<Node>>(maxScore, bestTeamPos);
+            foreach (var teamPosition in allAvailableTeamMoves)
+            {
+                UpdateTeamPosition(teamPosition, Human.humanTeam);
+                Pair<float, List<Node>> tmpResult = MakeBestMove(teamPosition, depth, true, alpha, beta);
+                UpdateTeamPosition(oldTeamPosition, Human.humanTeam);
+                if (tmpResult.First < bestMove.First)
+                {
+                    bestMove.First = tmpResult.First;
+                    bestMove.Second = teamPosition;
+                }
+                beta = Mathf.Min(beta, bestMove.First);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return bestMove;
+        }
     }
 
-    private Pair<float, List<Node>> GetHeuristicEvaluation(List<Node> teamPosition, bool isBotTeam)
+    private void UpdateTeamPosition(List<Node> teamPosition, List<Unit> team)
     {
-        int value = 0;
+        for (int i = 0; i < team.Count; ++i)
+        {
+            float y = team[i].transform.position.y;
+            Vector3 unitWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(teamPosition[i].x, teamPosition[i].y));
+            unitWorldPos.y = y;
+            team[i].transform.position = unitWorldPos;
+            team[i].UpdatePosition(team[i].transform.position.x, team[i].transform.position.z);
+        }
+    }
+
+    private Pair<float, List<Node>> GetHeuristicEvaluation(List<Node> teamPosition)
+    {
+        int value = 0;            
         foreach (var unitPosition in teamPosition)
         {
             value += BoardManager.Instance.map.width - unitPosition.x;
         }
-        
-        value = isBotTeam ? value : value * -1;
+
         return new Pair<float, List<Node>> (value, teamPosition);
     }
 
@@ -113,7 +157,8 @@ public class Bot {
             List<Node> moves = new List<Node>();
             Vector2 localPos = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
             BoardManager.Instance.GetAvailableMovementTiles(moves, BoardManager.Instance.map.graph[(int)localPos.x, (int)localPos.y]);
-            allTeamMoves.Add(moves);
+            var noDuplicateMoves = new HashSet<Node>(moves).ToList();
+            allTeamMoves.Add(noDuplicateMoves);
         }
 
         List<List<Node>> allCombinationMoves = AllCombinationsOf(allTeamMoves);

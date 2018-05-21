@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 346c106b568e57d4380da0571fd410a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileX: 13.3364
+  tileX: 9.3364
   tileZ: -0.0000001788139
   isBotUnit: 1
   distance: 1
@@ -243,7 +243,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 562301485}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.4, y: 1.1, z: -6.6}
+  m_LocalPosition: {x: -9.4, y: 1.1, z: -6.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1088683901}
@@ -309,8 +309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c4678a3bb7583749baab92f26a073ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 15
-  height: 11
+  width: 11
+  height: 9
   gap: 0.1
   tileTypes:
   - name: grass
@@ -380,7 +380,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 735295315}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.4, y: 0.6, z: 0}
+  m_LocalPosition: {x: -9.4, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1189588236}
@@ -484,10 +484,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc8b58dcaa655bc44b38acd3fa21bf49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileX: -13.3364
+  tileX: -9.3364
   tileZ: -6.6
   isBotUnit: 0
-  distance: 3
+  distance: 1
   damage: 8
   defense: 6
   startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -593,8 +593,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 346c106b568e57d4380da0571fd410a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileX: -13.3364
-  tileZ: -0.0000001788139
+  tileX: -9.3364
+  tileZ: 0
   isBotUnit: 0
   distance: 1
   damage: 2
@@ -625,7 +625,7 @@ Transform:
   m_PrefabInternal: {fileID: 1405346799}
   m_GameObject: {fileID: 1286356728}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.4, y: 0.6, z: 0}
+  m_LocalPosition: {x: 9.4, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 265169737}
@@ -706,13 +706,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1389668859}
-  m_LocalRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: -0.15, y: 16, z: -8}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
+  m_LocalPosition: {x: -0.15, y: 13.15, z: -8.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 65, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
 --- !u!114 &1389668864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -735,7 +735,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4728116255615790, guid: 707ce8df75afd4546b7e080689663d16, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 13.4
+      value: 9.4
       objectReference: {fileID: 0}
     - target: {fileID: 4728116255615790, guid: 707ce8df75afd4546b7e080689663d16, type: 2}
       propertyPath: m_LocalPosition.y
@@ -878,10 +878,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1a90a2c1b8cd64479b72b526118faa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileX: -13.3364
+  tileX: -9.3364
   tileZ: 6.6
   isBotUnit: 0
-  distance: 2
+  distance: 1
   damage: 3
   defense: 4
   startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -982,10 +982,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1a90a2c1b8cd64479b72b526118faa0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileX: 13.4
+  tileX: 9.4
   tileZ: 6.6
   isBotUnit: 1
-  distance: 2
+  distance: 1
   damage: 3
   defense: 4
   startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1087,10 +1087,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc8b58dcaa655bc44b38acd3fa21bf49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileX: 13.4
+  tileX: 9.4
   tileZ: -6.6
   isBotUnit: 1
-  distance: 3
+  distance: 1
   damage: 8
   defense: 6
   startColor: {r: 0, g: 0, b: 0, a: 0}
@@ -1117,7 +1117,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1586214115}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.4, y: 0.6, z: 6.6}
+  m_LocalPosition: {x: 9.4, y: 0.6, z: 6.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1433814716}
@@ -1177,7 +1177,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1650431270}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.4, y: 1.1, z: -6.6}
+  m_LocalPosition: {x: 9.4, y: 1.1, z: -6.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1510621063}
@@ -1206,7 +1206,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1686526757}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.4, y: 0.6, z: 6.6}
+  m_LocalPosition: {x: -9.4, y: 0.6, z: 6.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1411578715}
