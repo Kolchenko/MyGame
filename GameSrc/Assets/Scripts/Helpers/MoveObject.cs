@@ -13,14 +13,13 @@ public class MoveObject : MonoBehaviour
             while (unit.currentPath.Count != 1)
             {
                 unit.currentPath.RemoveAt(0);
-                Vector3 newUnitPos = PositionConverter.ToWorldCoordinates(new Vector2(unit.currentPath[0].x, unit.currentPath[0].y));
+                WorldPosition newUnitPos = PositionConverter.ToWorldCoordinates(new LocalPosition(unit.currentPath[0].x, unit.currentPath[0].y));
                 newUnitPos.y = y;
-                unit.transform.position = newUnitPos;
-                yield return new WaitForSeconds((float)(Time.deltaTime)); //todo: set time for each units
+                unit.transform.position = newUnitPos.ToVector3();
+                yield return new WaitForSeconds((Time.deltaTime)); //todo: set time for each units
             }
         }
 
         unit.currentPath = null;
-        unit.availableMovementTiles = null;
     }
 }

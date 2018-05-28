@@ -26,6 +26,7 @@ public class BoardManager : MonoBehaviour {
         if (unit != null)
         {
             selectedUnit = unit;
+            SelectAvailableTile();
             startPlayerColor = selectedUnit.GetComponent<Renderer>().material.GetColor("_Color");
             selectedUnit.GetComponent<Renderer>().material.SetColor("_Color", selectedPlayerColor);
         }
@@ -41,6 +42,66 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
+    public void SelectAvailableTile()
+    {
+        LocalPosition unitPosition = PositionConverter.ToLocalCoordinates(selectedUnit.worldPosition);
+        selectedUnit.availableMovementTiles = new List<Node>();
+        Node currentTile = map.graph[(int)unitPosition.x, (int)unitPosition.y];
+        GetAvailableMovementTiles(selectedUnit.availableMovementTiles, currentTile);
+
+        foreach (var item in selectedUnit.availableMovementTiles)
+        {
+            Collider[] colliders;
+            WorldPosition tileWorldPos = PositionConverter.ToWorldCoordinates(new LocalPosition(item.x, item.y));
+            colliders = Physics.OverlapSphere(tileWorldPos.ToVector3(), 0.125f /*Radius*/);
+
+            if (colliders.Length >= 1)
+            {
+                foreach (var collider in colliders)
+                {
+                    var go = collider.gameObject;
+                    if (go.name.StartsWith("Hexagon"))
+                    {
+                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
+                        {
+                            selectedUnit.startColor = go.GetComponent<Renderer>().material.GetColor("_Color");
+                            selectedUnit.availableTileColor = selectedUnit.startColor;
+                            //TODO: think about  other variant of colorized tile
+                            selectedUnit.availableTileColor.g = 0.6f;
+                            selectedUnit.availableTileColor.b = 0.4f;
+                            GameObjectHighlighter.Select(selectedUnit.startColor, selectedUnit.availableTileColor, go.GetComponent<Renderer>());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void DeselecteAvailableTile()
+    {
+        if (selectedUnit.availableMovementTiles != null)
+        {
+            foreach (var item in selectedUnit.availableMovementTiles)
+            {
+                Collider[] colliders;
+                WorldPosition tileWorldPos = PositionConverter.ToWorldCoordinates(new LocalPosition(item.x, item.y));
+                colliders = Physics.OverlapSphere(tileWorldPos.ToVector3(), 0.125f /*Radius*/);
+
+                if (colliders.Length >= 1)
+                {
+                    foreach (var collider in colliders)
+                    {
+                        var gameObject = collider.gameObject;
+                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
+                        {
+                            GameObjectHighlighter.Deselect(selectedUnit.startColor, gameObject.GetComponent<Renderer>());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void GeneratePathTo(float x, float z)
     {
         selectedUnit.currentPath = null;
@@ -48,8 +109,8 @@ public class BoardManager : MonoBehaviour {
         Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
         List<Node> unvisited = new List<Node>();
 
-        Vector2 sourceLocalPos = PositionConverter.ToLocalCoordinates(new Vector3(selectedUnit.tileX, 0, selectedUnit.tileZ));
-        Vector2 targetLocalPos = PositionConverter.ToLocalCoordinates(new Vector3(x, 0, z));
+        LocalPosition sourceLocalPos = PositionConverter.ToLocalCoordinates(selectedUnit.worldPosition);
+        LocalPosition targetLocalPos = PositionConverter.ToLocalCoordinates(new WorldPosition(x, 0, z));
 
         Node source = map.graph[(int)sourceLocalPos.x, (int)sourceLocalPos.y];
         Node target = map.graph[(int)targetLocalPos.x, (int)targetLocalPos.y];
@@ -143,7 +204,7 @@ public class BoardManager : MonoBehaviour {
         // check other player units pos
         foreach (var item in Instance.playerUnits)
         {
-            Vector2 unitPosition = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+            LocalPosition unitPosition = PositionConverter.ToLocalCoordinates(item.worldPosition);
             Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
             visitedTiles.Add(currentTileWithUnit);
         }
@@ -151,7 +212,7 @@ public class BoardManager : MonoBehaviour {
         // check other AI units pos
         foreach (var item in Instance.enemyUnits)
         {
-            Vector2 unitPosition = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+            LocalPosition unitPosition = PositionConverter.ToLocalCoordinates(item.worldPosition);
             Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
             visitedTiles.Add(currentTileWithUnit);
         }
@@ -191,32 +252,7 @@ public class BoardManager : MonoBehaviour {
             }
         }
     }
-
-    public void DeselecteAvailableTile()
-    {
-        if (selectedUnit.availableMovementTiles != null)
-        {
-            foreach (var item in selectedUnit.availableMovementTiles)
-            {
-                Collider[] colliders;
-                Vector3 tileWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(item.x, item.y));
-                colliders = Physics.OverlapSphere(tileWorldPos, 0.125f /*Radius*/);
-
-                if (colliders.Length >= 1)
-                {
-                    foreach (var collider in colliders)
-                    {
-                        var gameObject = collider.gameObject;
-                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
-                        {
-                            GameObjectHighlighter.Deselect(selectedUnit.startColor, gameObject.GetComponent<Renderer>());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    
     public bool isAvailableClickedTile(Node tile)
     {
         return selectedUnit.availableMovementTiles.Contains(tile);

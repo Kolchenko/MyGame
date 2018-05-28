@@ -19,7 +19,7 @@ public class Human {
 
         foreach (var item in humanTeam)
         {
-            item.SelectUnit();
+            BoardManager.Instance.SelectUnit(item);
             // todo: остальные юниты задизейблить совсем, мышь доступна только на выделенных тайлах
             yield return new WaitUntil(() => Unit.isHumanMakeTurn == true);
             Unit.isHumanMakeTurn = false;

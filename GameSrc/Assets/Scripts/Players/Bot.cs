@@ -36,7 +36,7 @@ public class Bot {
         List<Node> startTeamPos = new List<Node>();
         foreach (var unit in botTeam)
         {
-            Vector2 unitLocalPos = PositionConverter.ToLocalCoordinates(new Vector3(unit.tileX, 0, unit.tileZ));
+            LocalPosition unitLocalPos = PositionConverter.ToLocalCoordinates(unit.worldPosition);
             Node unitStartNode = BoardManager.Instance.map.graph[(int)unitLocalPos.x, (int)unitLocalPos.y];
             startTeamPos.Add(unitStartNode);
         }
@@ -68,7 +68,7 @@ public class Bot {
             List<Node> oldTeamPosition = new List<Node>();
             foreach (var item in botTeam)
             {
-                Vector2 localPos = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+                LocalPosition localPos = PositionConverter.ToLocalCoordinates(item.worldPosition);
                 oldTeamPosition.Add(BoardManager.Instance.map.graph[(int)localPos.x, (int)localPos.y]);
             }
 
@@ -98,7 +98,7 @@ public class Bot {
             List<Node> oldTeamPosition = new List<Node>();
             foreach (var item in Human.humanTeam)
             {
-                Vector2 localPos = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+                LocalPosition localPos = PositionConverter.ToLocalCoordinates(item.worldPosition);
                 oldTeamPosition.Add(BoardManager.Instance.map.graph[(int)localPos.x, (int)localPos.y]);
             }
 
@@ -127,10 +127,10 @@ public class Bot {
         for (int i = 0; i < team.Count; ++i)
         {
             float y = team[i].transform.position.y;
-            Vector3 unitWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(teamPosition[i].x, teamPosition[i].y));
+            WorldPosition unitWorldPos = PositionConverter.ToWorldCoordinates(new LocalPosition(teamPosition[i].x, teamPosition[i].y));
             unitWorldPos.y = y;
-            team[i].transform.position = unitWorldPos;
-            team[i].UpdatePosition(team[i].transform.position.x, team[i].transform.position.z);
+            team[i].transform.position = unitWorldPos.ToVector3();
+            team[i].UpdatePosition(unitWorldPos);
         }
     }
 
@@ -155,7 +155,7 @@ public class Bot {
         {
             BoardManager.selectedUnit = item;
             List<Node> moves = new List<Node>();
-            Vector2 localPos = PositionConverter.ToLocalCoordinates(new Vector3(item.tileX, 0, item.tileZ));
+            LocalPosition localPos = PositionConverter.ToLocalCoordinates(item.worldPosition);
             BoardManager.Instance.GetAvailableMovementTiles(moves, BoardManager.Instance.map.graph[(int)localPos.x, (int)localPos.y]);
             var noDuplicateMoves = new HashSet<Node>(moves).ToList();
             allTeamMoves.Add(noDuplicateMoves);

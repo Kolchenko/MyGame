@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum MouseButton
+{
+    LEFT = 0,
+    RIGHT,
+    MIDDLE
+}
+
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
     private Bot bot;

@@ -3,9 +3,42 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
+[System.Serializable]
+public struct LocalPosition
+{
+    public int x;
+    public int y;
+
+    public LocalPosition(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+[System.Serializable]
+public struct WorldPosition
+{
+    public float x;
+    public float y;
+    public float z;
+
+    public WorldPosition(float x, int y, float z) : this()
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public Vector3 ToVector3()
+    {
+        return new Vector3(x, y, z);
+    }
+}
+
 public class Unit : MonoBehaviour {
-    public float tileX;
-    public float tileZ;
+    public LocalPosition localPosition;
+    public WorldPosition worldPosition;
     public bool isBotUnit;
     public int distance;
     public int damage;
@@ -17,62 +50,21 @@ public class Unit : MonoBehaviour {
     public Color availableTileColor;
     public List<Node> availableMovementTiles = null;
 
-    public void UpdatePosition(float x, float z)
+    public void UpdatePosition(WorldPosition worldPosition)
     {
-        tileX = x;
-        tileZ = z;
+        this.worldPosition = worldPosition;
+        this.localPosition = PositionConverter.ToLocalCoordinates(worldPosition);
     }
 
     public void MoveToEnterTile()
     {
         if (currentPath != null)
         {
-            Vector3 moveTo = PositionConverter.ToWorldCoordinates(new Vector2(currentPath[currentPath.Count - 1].x, currentPath[currentPath.Count - 1].y));
+            WorldPosition moveTo = PositionConverter.ToWorldCoordinates(new LocalPosition(currentPath[currentPath.Count - 1].x, currentPath[currentPath.Count - 1].y));
             moveTo.y = transform.position.y;
-            UpdatePosition(moveTo.x, moveTo.z);
-            transform.position = moveTo;
-            //StartCoroutine(MoveObject.MoveUnit(moveTo)); TODO: return
-        }
-    }
-
-    public void SelectUnit()
-    {
-        BoardManager board = BoardManager.Instance;
-        TileMap map = board.map;
-
-        board.DeselectUnit();
-        board.SelectUnit(this);
-
-        Vector2 unitPosition = PositionConverter.ToLocalCoordinates(new Vector3(tileX, 0, tileZ));
-        availableMovementTiles = new List<Node>();
-        Node currentTile = map.graph[(int)unitPosition.x, (int)unitPosition.y];
-        board.GetAvailableMovementTiles(availableMovementTiles, currentTile);
-
-        foreach (var item in availableMovementTiles)
-        {
-            Collider[] colliders;
-            Vector3 tileWorldPos = PositionConverter.ToWorldCoordinates(new Vector2(item.x, item.y));
-            colliders = Physics.OverlapSphere(tileWorldPos, 0.125f /*Radius*/);
-
-            if (colliders.Length >= 1)
-            {
-                foreach (var collider in colliders)
-                {
-                    var go = collider.gameObject;
-                    if (go.name.StartsWith("Hexagon"))
-                    {
-                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
-                        {
-                            startColor = go.GetComponent<Renderer>().material.GetColor("_Color");
-                            availableTileColor = startColor;
-                            //TODO: think about  other variant of colorized tile
-                            availableTileColor.g = 0.6f;
-                            availableTileColor.b = 0.4f;
-                            GameObjectHighlighter.Select(startColor, availableTileColor, go.GetComponent<Renderer>());
-                        }
-                    }
-                }
-            }
+            UpdatePosition(moveTo);
+            transform.position = moveTo.ToVector3();
+            //StartCoroutine(MoveObject.MoveUnit(moveTo)); //TODO: return
         }
     }
 

@@ -73,11 +73,11 @@ public class TileMap : MonoBehaviour
                 }
                 #endregion
                 
-                Vector2 tilePos = new Vector2(x, y);
+                LocalPosition tilePos = new LocalPosition(x, y);
 
                 Transform tile = Instantiate(tt.tileVisualPrefab.transform) as Transform;
 
-                tile.position = PositionConverter.ToWorldCoordinates(tilePos);
+                tile.position = PositionConverter.ToWorldCoordinates(tilePos).ToVector3();
                 tile.parent = transform;
                 tile.name = "Hexagon" + tilePos.x + "|" + tilePos.y;
 
