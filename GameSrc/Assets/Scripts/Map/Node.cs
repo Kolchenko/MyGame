@@ -12,7 +12,7 @@ public class Node
     {
         neighbours = new List<Node>();
     }
-
+    
     public float DistanceTo(Node node)
     {
         return Vector2.Distance(
