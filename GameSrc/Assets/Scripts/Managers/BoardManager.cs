@@ -187,6 +187,7 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
+    //todo: think about signature
     public void GetAvailableMovementTiles(List<Node> availableMovementTiles, Node startPos)
     {
         int maxDepth = selectedUnit.distance;
@@ -199,13 +200,12 @@ public class BoardManager : MonoBehaviour {
 
         List<Node> visitedTiles = new List<Node>();
         visitedTiles.Add(startPos);
-        //availableMovementTiles.Add(startPos);
 
         // check other player units pos
         foreach (var item in Instance.playerUnits)
         {
             LocalPosition unitPosition = PositionConverter.ToLocalCoordinates(item.worldPosition);
-            Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
+            Node currentTileWithUnit = map.graph[unitPosition.x, unitPosition.y];
             visitedTiles.Add(currentTileWithUnit);
         }
 
@@ -213,7 +213,7 @@ public class BoardManager : MonoBehaviour {
         foreach (var item in Instance.enemyUnits)
         {
             LocalPosition unitPosition = PositionConverter.ToLocalCoordinates(item.worldPosition);
-            Node currentTileWithUnit = map.graph[(int)unitPosition.x, (int)unitPosition.y];
+            Node currentTileWithUnit = map.graph[unitPosition.x, unitPosition.y];
             visitedTiles.Add(currentTileWithUnit);
         }
 
