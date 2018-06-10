@@ -5,5 +5,4 @@ using System.Text;
 
 public class Griffin : Unit
 {
-    
 }

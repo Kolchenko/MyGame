@@ -46,7 +46,7 @@ public class BoardManager : MonoBehaviour {
     {
         LocalPosition unitPosition = PositionConverter.ToLocalCoordinates(selectedUnit.worldPosition);
         selectedUnit.availableMovementTiles = new List<Node>();
-        Node currentTile = map.graph[(int)unitPosition.x, (int)unitPosition.y];
+        Node currentTile = map.graph[unitPosition.x, unitPosition.y];
         GetAvailableMovementTiles(selectedUnit.availableMovementTiles, currentTile);
 
         foreach (var item in selectedUnit.availableMovementTiles)
@@ -238,7 +238,7 @@ public class BoardManager : MonoBehaviour {
             for (int i = 0; i < currentVertex.neighbours.Count; ++i)
             {
                 Node tile = currentVertex.neighbours[i];
-                if (!visitedTiles.Contains(tile) && map.tiles[tile.x, tile.y] != 1 /*mountain*/)
+                if ((!visitedTiles.Contains(tile) && map.tiles[tile.x, tile.y] != 1 /*mountain*/) || (map.tiles[tile.x, tile.y] == 1 && selectedUnit.distance == 3))
                 {
                     visitedTiles.Add(tile);
                     burningTiles.Enqueue(tile);

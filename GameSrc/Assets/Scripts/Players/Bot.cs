@@ -9,7 +9,7 @@ public class Bot
 {
     const int COUNT_OF_UNITS = 3;
     const int START_INITIATIVE = 0;
-    const int DEPTH_OF_TREE = 3;
+    const int DEPTH_OF_TREE = 1; //todo: temporary
 
     public class Pair<T, U>
     {
@@ -39,17 +39,20 @@ public class Bot
     public void Do()
     {
         Node[] startTeamPos = GetCurrentTeamPosition(botTeam);
-        var bestMove = MakeBestMove(ref startTeamPos, DEPTH_OF_TREE, START_INITIATIVE, isBotTeam, Mathf.NegativeInfinity, Mathf.Infinity);
+        Node[] testTeamPos = new Node[3];
+        scores.Clear();
+        var bestMove = MakeBestMove(startTeamPos, DEPTH_OF_TREE, START_INITIATIVE, isBotTeam, Mathf.NegativeInfinity, Mathf.Infinity, testTeamPos);
         MoveTeamPosition(bestMove.Second, botTeam);
         Turn.isHumanTurn = true;
     }
 
     List<Pair<float, Node[]>> allMoves = new List<Pair<float, Node[]>>();
+    List<float> scores = new List<float>();
 
     // Alpha-beta pruning
-    private Pair<float, Node[]> MakeBestMove(ref Node[] teamPos, int depth, int initiative, bool isBotTeam, float alpha, float beta)
+    private Pair<float, Node[]> MakeBestMove(Node[] teamPos, int depth, int initiative, bool isBotTeam, float alpha, float beta, Node[] testTeamPos)
     {
-        if (depth == 0)
+        if ((DEPTH_OF_TREE == 1 && depth == 0) || (DEPTH_OF_TREE != 1 && depth == 1))
         {
             return GetHeuristicEvaluation(teamPos);
         }
@@ -75,10 +78,18 @@ public class Bot
         {
             Node unitPosition = allAvailableUnitMoves[i];
 
-            UpdateTeamPosition(currentTeam, unitPosition, initiative == 0 ? 2 : initiative - 1 /*prev unit*/, depth);
-            Node[] newTeamPosition = GetCurrentTeamPosition(currentTeam);
+            UpdateTeamPosition(currentTeam, unitPosition, initiative == 0 ? 2 : initiative - 1 /*prev unit*/);
 
-            /*  */
+            if (depth == DEPTH_OF_TREE && isBotTeam && initiative == 1)
+                testTeamPos[0] = unitPosition;
+            else if (depth == DEPTH_OF_TREE && isBotTeam && initiative == 2)
+                testTeamPos[1] = unitPosition;
+            else if (depth == DEPTH_OF_TREE - 1 && !isBotTeam && initiative == 0)
+                testTeamPos[2] = unitPosition;
+
+
+            #region set newTeamPosition
+            Node[] newTeamPosition = GetCurrentTeamPosition(currentTeam);
             if (initiative == START_INITIATIVE && isBotTeam && depth != 0)
             {
                 newTeamPosition = GetCurrentTeamPosition(botTeam);
@@ -87,35 +98,35 @@ public class Bot
             {
                 newTeamPosition = GetCurrentTeamPosition(Human.humanTeam);
             }
+            #endregion
 
-            Pair<float, Node[]> tmpResult = MakeBestMove(ref newTeamPosition, depth, initiative, isBotTeam, -beta, -bestMove.First);
-            UpdateTeamPosition(teamPos /*start pos*/, currentTeam);
-            
+            Pair<float, Node[]> tmpResult = MakeBestMove(newTeamPosition, depth, initiative, isBotTeam, -beta, -bestMove.First, testTeamPos);
+            UpdateTeamPosition(teamPos, currentTeam);
+
             if (tmpResult.First > bestMove.First)
             {
                 bestMove.First = tmpResult.First;
-                bestMove.Second = newTeamPosition;
-
-                if (bestMove.First >= beta)
+                scores.Add(bestMove.First);
+                if (((DEPTH_OF_TREE == 1 && depth == 0) || (DEPTH_OF_TREE != 1 && depth == 1)) && !isBotTeam && initiative == 0)
                 {
-                    break;
+                    bestMove.Second = new Node[3] { testTeamPos[0], testTeamPos[1], testTeamPos[2] };
+                }
+                else
+                {
+                    bestMove.Second = tmpResult.Second;
                 }
             }
+
+            if (-bestMove.First > beta) // todo: >
+            {
+                break;
+            }
         }
-        
+
         return bestMove;
     }
 
-    private void UpdateTeamPosition(Node[] teamPosition, Node unitPosition, List<Unit> team)
-    {
-        for (int i = 0; i < team.Count; ++i)
-        {
-            WorldPosition unitWorldPos = PositionConverter.ToWorldCoordinates(new LocalPosition(teamPosition[i].x, teamPosition[i].y));
-            team[i].UpdatePosition(unitWorldPos);
-        }
-    }
-
-    private void UpdateTeamPosition(List<Unit> currentTeam, Node unitPosition, int initiative, int depthe)
+    private void UpdateTeamPosition(List<Unit> currentTeam, Node unitPosition, int initiative)
     {
         //todo: add ctor for nodes
         currentTeam[initiative].UpdatePosition(PositionConverter.ToWorldCoordinates(new LocalPosition(unitPosition.x, unitPosition.y)));
@@ -151,13 +162,6 @@ public class Bot
         }
 
         return new Pair<float, Node[]>(value, teamPosition);
-    }
-
-    private Pair<float, Node> GetHeuristicEvaluation(Node unitPosition)
-    {
-        int value = 0;
-        value += BoardManager.Instance.map.width - unitPosition.x;
-        return new Pair<float, Node>(value, unitPosition);
     }
 
     private List<Node> GetAllAvailableUnitMoves(Unit unit)

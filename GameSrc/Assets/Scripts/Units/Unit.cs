@@ -64,7 +64,7 @@ public class Unit : MonoBehaviour {
             moveTo.y = transform.position.y;
             UpdatePosition(moveTo);
             transform.position = moveTo.ToVector3();
-            //StartCoroutine(MoveObject.MoveUnit(moveTo)); //TODO: return
+            StartCoroutine(MoveObject.MoveUnit(moveTo)); //TODO: return
         }
     }
 
