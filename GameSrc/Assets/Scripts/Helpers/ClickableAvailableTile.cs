@@ -9,7 +9,7 @@ public class ClickableAvailableTile : MonoBehaviour {
     private void OnMouseUp()
     {
         LocalPosition clickedTileLocalPos = PositionConverter.ToLocalCoordinates(new WorldPosition(tileX, 0, tileY));
-        Node clickedTtile = BoardManager.Instance.map.graph[(int)clickedTileLocalPos.x, (int)clickedTileLocalPos.y];
+        Node clickedTtile = BoardManager.Instance.map.graph[clickedTileLocalPos.x, clickedTileLocalPos.y];
 
         if (BoardManager.selectedUnit != null && BoardManager.Instance.isAvailableClickedTile(clickedTtile))
         {

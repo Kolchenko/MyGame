@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour {
-    public Unit[] playerUnits;
-    public Unit[] enemyUnits;
+    public List<Unit> playerUnits;
+    public List<Unit> enemyUnits;
 
     static public Unit selectedUnit;
     public static Color startPlayerColor;
     public static Color selectedPlayerColor = new Color(0.1f, 0.1f, 0.9f);
     List<Node> currentPath = null;
+    List<Node> currentPathToEnemy = null;
     public TileMap map = null;
 
     public static BoardManager Instance { get; private set; }
@@ -112,8 +113,15 @@ public class BoardManager : MonoBehaviour {
         LocalPosition sourceLocalPos = PositionConverter.ToLocalCoordinates(selectedUnit.worldPosition);
         LocalPosition targetLocalPos = PositionConverter.ToLocalCoordinates(new WorldPosition(x, 0, z));
 
-        Node source = map.graph[(int)sourceLocalPos.x, (int)sourceLocalPos.y];
-        Node target = map.graph[(int)targetLocalPos.x, (int)targetLocalPos.y];
+        Node source = map.graph[sourceLocalPos.x, sourceLocalPos.y];
+        Node target = map.graph[targetLocalPos.x, targetLocalPos.y];
+
+        if (selectedUnit.availableMovementTiles == null)
+        {
+            selectedUnit.availableMovementTiles = new List<Node>();
+            Node currentTile = map.graph[selectedUnit.localPosition.x, selectedUnit.localPosition.y];
+            GetAvailableMovementTiles(selectedUnit.availableMovementTiles, currentTile);
+        }
 
         if (selectedUnit.availableMovementTiles.Contains(target))
         {
@@ -187,6 +195,90 @@ public class BoardManager : MonoBehaviour {
         }
     }
 
+    public void GeneratePathToEnemy(Unit enemy)
+    {
+        selectedUnit.currentPathToEnemy = null;
+        Dictionary<Node, float> dist = new Dictionary<Node, float>();
+        Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
+        List<Node> unvisited = new List<Node>();
+
+        LocalPosition sourceLocalPos = PositionConverter.ToLocalCoordinates(selectedUnit.worldPosition);
+        LocalPosition targetLocalPos = PositionConverter.ToLocalCoordinates(enemy.worldPosition);
+
+        Node source = map.graph[sourceLocalPos.x, sourceLocalPos.y];
+        Node target = map.graph[targetLocalPos.x, targetLocalPos.y];
+
+        if (selectedUnit.CanAttack(enemy))
+        {
+            dist[source] = 0;
+            prev[source] = null;
+
+            foreach (var vertex in map.graph)
+            {
+
+                if (vertex != source)
+                {
+                    dist[vertex] = Mathf.Infinity;
+                    prev[vertex] = null;
+                }
+                unvisited.Add(vertex);
+            }
+
+            while (unvisited.Count > 0)
+            {
+                Node u = null;
+
+                foreach (var possibleU in unvisited)
+                {
+                    if (u == null || dist[u] > dist[possibleU])
+                    {
+                        u = possibleU;
+                    }
+                }
+
+                if (u == target)
+                {
+                    break;
+                }
+
+                unvisited.Remove(u);
+
+                foreach (var v in u.neighbours)
+                {
+                    if (selectedUnit.availableMovementTiles.Contains(v) || (v.x == enemy.localPosition.x && v.y == enemy.localPosition.y))
+                    {
+                        float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
+                        if (alt < dist[v])
+                        {
+                            dist[v] = alt;
+                            prev[v] = u;
+                        }
+                    }
+                }
+            }
+
+            if (prev[target] == null)
+            {
+                //No route between source and target
+                return;
+            }
+            else
+            {
+                currentPathToEnemy = new List<Node>();
+                Node currentTile = target;
+
+                while (currentTile != null)
+                {
+                    currentPathToEnemy.Add(currentTile);
+                    currentTile = prev[currentTile];
+                }
+
+                currentPathToEnemy.Reverse();
+                selectedUnit.currentPathToEnemy = currentPathToEnemy;
+            }
+        }
+    }
+
     //todo: think about signature
     public void GetAvailableMovementTiles(List<Node> availableMovementTiles, Node startPos)
     {
@@ -238,7 +330,7 @@ public class BoardManager : MonoBehaviour {
             for (int i = 0; i < currentVertex.neighbours.Count; ++i)
             {
                 Node tile = currentVertex.neighbours[i];
-                if ((!visitedTiles.Contains(tile) && map.tiles[tile.x, tile.y] != 1 /*mountain*/) || (map.tiles[tile.x, tile.y] == 1 && selectedUnit.distance == 3))
+                if ((!visitedTiles.Contains(tile) && map.tiles[tile.x, tile.y] != 1 /*mountain*/))
                 {
                     visitedTiles.Add(tile);
                     burningTiles.Enqueue(tile);

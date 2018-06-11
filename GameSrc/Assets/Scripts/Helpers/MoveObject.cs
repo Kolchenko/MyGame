@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class MoveObject : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class MoveObject : MonoBehaviour
                 WorldPosition newUnitPos = PositionConverter.ToWorldCoordinates(new LocalPosition(unit.currentPath[0].x, unit.currentPath[0].y));
                 newUnitPos.y = y;
                 unit.transform.position = newUnitPos.ToVector3();
-                yield return new WaitForSeconds((1)); //todo: set time for each units
+                yield return new WaitForSeconds(Time.deltaTime); //todo: set time for each units
             }
         }
 

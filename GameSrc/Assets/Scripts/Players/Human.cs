@@ -15,7 +15,7 @@ public class Human {
 
     public static IEnumerator Do()
     {
-        humanTeam.OrderBy(dist => dist.distance);
+        //humanTeam.OrderBy(dist => dist.distance);
 
         foreach (var item in humanTeam)
         {

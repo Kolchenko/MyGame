@@ -33,8 +33,10 @@ public class UnitInfoPrintable : MonoBehaviour {
 
     private void printInfo(Unit unit)
     {
-        Debug.Log("Distance: " + unit.distance);
-        Debug.Log("Damage: " + unit.damage);
-        Debug.Log("Defense: " + unit.defense);
+        Debug.Log("Count of warrior: " + unit.countOfWarrior);
+        Debug.Log("Damage: " + unit.damageResult);
+        Debug.Log("teamDamage: " + unit.teamDamage);
+        Debug.Log("teamHealth: " + unit.teamHealth);
+        Debug.Log("lastWarriorDamage: " + unit.lastWarriorDamage);
     }
 }

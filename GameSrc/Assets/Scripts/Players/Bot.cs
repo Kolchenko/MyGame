@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class Bot
 {
-    const int COUNT_OF_UNITS = 3;
     const int START_INITIATIVE = 0;
     const int DEPTH_OF_TREE = 1; //todo: temporary
+    int countOfUnits = 0;
 
     public class Pair<T, U>
     {
@@ -31,17 +31,20 @@ public class Bot
 
     public Bot()
     {
-        botTeam = BoardManager.Instance.enemyUnits.OfType<Unit>().ToList();
+        botTeam = BoardManager.Instance.enemyUnits;
     }
 
     bool isBotTeam = true;
 
     public void Do()
     {
+        botTeam = BoardManager.Instance.enemyUnits;
+        countOfUnits = botTeam.Count; // todo: remove
         Node[] startTeamPos = GetCurrentTeamPosition(botTeam);
-        Node[] testTeamPos = new Node[3];
-        scores.Clear();
+        Node[] testTeamPos = new Node[botTeam.Count];
+        scores.Clear(); //todo: remove
         var bestMove = MakeBestMove(startTeamPos, DEPTH_OF_TREE, START_INITIATIVE, isBotTeam, Mathf.NegativeInfinity, Mathf.Infinity, testTeamPos);
+        botTeam = BoardManager.Instance.enemyUnits;
         MoveTeamPosition(bestMove.Second, botTeam);
         Turn.isHumanTurn = true;
     }
@@ -63,7 +66,7 @@ public class Bot
         List<Unit> currentTeam = isBotTeam ? botTeam : Human.humanTeam;
         List<Node> allAvailableUnitMoves = GetAllAvailableUnitMoves(currentTeam[initiative]);
 
-        if (initiative == COUNT_OF_UNITS - 1)
+        if (initiative == currentTeam.Count - 1)
         {
             initiative = START_INITIATIVE;
             isBotTeam = !isBotTeam;
@@ -71,21 +74,22 @@ public class Bot
         }
         else
         {
-            initiative++;
+            ++initiative;
         }
 
         for (int i = 0; i < allAvailableUnitMoves.Count; ++i)
         {
             Node unitPosition = allAvailableUnitMoves[i];
 
-            UpdateTeamPosition(currentTeam, unitPosition, initiative == 0 ? 2 : initiative - 1 /*prev unit*/);
+            UpdateTeamPosition(currentTeam, unitPosition, initiative == 0 ? currentTeam.Count - 1 : initiative - 1 /*prev unit*/);
 
-            if (depth == DEPTH_OF_TREE && isBotTeam && initiative == 1)
-                testTeamPos[0] = unitPosition;
-            else if (depth == DEPTH_OF_TREE && isBotTeam && initiative == 2)
-                testTeamPos[1] = unitPosition;
-            else if (depth == DEPTH_OF_TREE - 1 && !isBotTeam && initiative == 0)
-                testTeamPos[2] = unitPosition;
+            if (depth == DEPTH_OF_TREE && isBotTeam)
+            {
+                testTeamPos[initiative - 1] = unitPosition;             
+            } else if (depth == DEPTH_OF_TREE - 1 && !isBotTeam && initiative == START_INITIATIVE)
+            {
+                testTeamPos[currentTeam.Count - 1] = unitPosition;
+            }
 
 
             #region set newTeamPosition
@@ -109,7 +113,11 @@ public class Bot
                 scores.Add(bestMove.First);
                 if (((DEPTH_OF_TREE == 1 && depth == 0) || (DEPTH_OF_TREE != 1 && depth == 1)) && !isBotTeam && initiative == 0)
                 {
-                    bestMove.Second = new Node[3] { testTeamPos[0], testTeamPos[1], testTeamPos[2] };
+                    bestMove.Second = new Node[testTeamPos.Length];
+                    for (int j = 0; j < testTeamPos.Length; ++j)
+                    {
+                        bestMove.Second[j] = new Node(testTeamPos[j]);
+                    }
                 }
                 else
                 {
@@ -128,8 +136,11 @@ public class Bot
 
     private void UpdateTeamPosition(List<Unit> currentTeam, Node unitPosition, int initiative)
     {
-        //todo: add ctor for nodes
-        currentTeam[initiative].UpdatePosition(PositionConverter.ToWorldCoordinates(new LocalPosition(unitPosition.x, unitPosition.y)));
+        if (initiative < currentTeam.Count)
+        {
+            //todo: add ctor for nodes
+            currentTeam[initiative].UpdatePosition(PositionConverter.ToWorldCoordinates(new LocalPosition(unitPosition.x, unitPosition.y)));
+        }
     }
 
     private void UpdateTeamPosition(Node[] teamPosition, List<Unit> team)
@@ -148,6 +159,9 @@ public class Bot
             float y = team[i].transform.position.y;
             WorldPosition unitWorldPos = PositionConverter.ToWorldCoordinates(new LocalPosition(teamPosition[i].x, teamPosition[i].y));
             unitWorldPos.y = y;
+            BoardManager.selectedUnit = team[i];
+            BoardManager.Instance.GeneratePathTo(unitWorldPos.x, unitWorldPos.z);
+            BoardManager.selectedUnit.MoveToEnterTile();
             team[i].transform.position = unitWorldPos.ToVector3();
             team[i].UpdatePosition(unitWorldPos);
         }
@@ -174,46 +188,10 @@ public class Bot
         return moves;
     }
 
-    private List<Node[]> GetAllAvailableTeamMoves(List<Unit> team)
-    {
-        List<Node[]> allTeamMoves = new List<Node[]>();
-        foreach (var item in team)
-        {
-            BoardManager.selectedUnit = item;
-            List<Node> moves = new List<Node>();
-            LocalPosition localPos = PositionConverter.ToLocalCoordinates(item.worldPosition);
-            BoardManager.Instance.GetAvailableMovementTiles(moves, BoardManager.Instance.map.graph[localPos.x, localPos.y]);
-            var noDuplicateMoves = new HashSet<Node>(moves).ToArray();
-            allTeamMoves.Add(noDuplicateMoves);
-        }
-
-        List<Node[]> allCombinationMoves = GetAllCombinationMoves(allTeamMoves);
-
-        return allCombinationMoves;
-    }
-
-    private List<Node[]> GetAllCombinationMoves(List<Node[]> teamMoves)
-    {
-        List<Node[]> allCombinations = new List<Node[]>();
-        for (int i = 0; i < teamMoves[0].Length; ++i)
-        {
-            for (int j = 0; j < teamMoves[1].Length; ++j)
-            {
-                for (int k = 0; k < teamMoves[2].Length; ++k)
-                {
-                    Node[] poses = new Node[COUNT_OF_UNITS] { teamMoves[0][i], teamMoves[1][j], teamMoves[2][k] };
-                    allCombinations.Add(poses);
-                }
-            }
-        }
-
-        return allCombinations;
-    }
-
     private Node[] GetCurrentTeamPosition(List<Unit> team)
     {
-        Node[] teamPosition = new Node[COUNT_OF_UNITS];
-        for (int i = 0; i < COUNT_OF_UNITS; ++i)
+        Node[] teamPosition = new Node[team.Count];
+        for (int i = 0; i < team.Count; ++i)
         {
             LocalPosition localPos = PositionConverter.ToLocalCoordinates(team[i].worldPosition);
             teamPosition[i] = BoardManager.Instance.map.graph[localPos.x, localPos.y];

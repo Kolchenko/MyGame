@@ -125,9 +125,10 @@ GameObject:
   - component: {fileID: 265169739}
   - component: {fileID: 265169738}
   - component: {fileID: 265169741}
+  - component: {fileID: 265169742}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Spearman
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -221,11 +222,33 @@ MonoBehaviour:
     y: 0.6
     z: 0
   isBotUnit: 1
+  attackSkill: 4
+  defenseSkill: 5
+  damageMin: 1
+  damageMax: 3
+  health: 10
   distance: 1
-  damage: 2
-  defense: 3
+  countOfWarrior: 5
+  shot: 0
+  damageResult: 0
+  teamDamage: -2147483648
+  teamHealth: -2147483648
+  lastWarriorDamage: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &265169742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 265169736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77110813975123241b002ca43bc11261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCursor: {fileID: 2800000, guid: d4484d350e72d0d49b4a228d0c398abf, type: 3}
+  defaultCursor: {fileID: 2800000, guid: 4b3f35faf49a5b54fb1c7dcf0c0bc3d2, type: 3}
 --- !u!1001 &281681252
 Prefab:
   m_ObjectHideFlags: 0
@@ -233,70 +256,84 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1637629052}
     m_Modifications:
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_LocalPosition.x
       value: -9.4
       objectReference: {fileID: 0}
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_LocalPosition.y
       value: 0.6
       objectReference: {fileID: 0}
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_LocalRotation.y
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_LocalRotation.z
       value: -0
       objectReference: {fileID: 0}
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+    - target: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603, type: 2}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114956520046126062, guid: b02545e22bd4bcb438f22db9c8916f19,
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
         type: 2}
-      propertyPath: startLocalPosY
+      propertyPath: attack
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 114956520046126062, guid: b02545e22bd4bcb438f22db9c8916f19,
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
         type: 2}
-      propertyPath: startWorldPosX
-      value: -9.4
+      propertyPath: defense
+      value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 114956520046126062, guid: b02545e22bd4bcb438f22db9c8916f19,
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
         type: 2}
-      propertyPath: startWorldPosY
-      value: 0
+      propertyPath: health
+      value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: 114956520046126062, guid: b02545e22bd4bcb438f22db9c8916f19,
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
         type: 2}
-      propertyPath: localPosition.y
+      propertyPath: countOfWarrior
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
+        type: 2}
+      propertyPath: damageMin
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
+        type: 2}
+      propertyPath: damageMax
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
+        type: 2}
+      propertyPath: attackSkill
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 114956520046126062, guid: b02545e22bd4bcb438f22db9c8916f19,
+    - target: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
         type: 2}
-      propertyPath: worldPosition.x
-      value: -9.4
+      propertyPath: defenseSkill
+      value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 114956520046126062, guid: b02545e22bd4bcb438f22db9c8916f19,
-        type: 2}
-      propertyPath: worldPosition.y
-      value: 0.6
+    - target: {fileID: 1351026518174692, guid: b701e66d097f96f46814294782efd603, type: 2}
+      propertyPath: m_TagString
+      value: Spearman
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: b02545e22bd4bcb438f22db9c8916f19, type: 2}
+  m_ParentPrefab: {fileID: 100100000, guid: b701e66d097f96f46814294782efd603, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &478265059
 Prefab:
@@ -356,6 +393,55 @@ Prefab:
         type: 2}
       propertyPath: distance
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: health
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: attack
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: defense
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: countOfWarrior
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: shot
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: damageMin
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: damageMax
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: attackSkill
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114439506346974980, guid: b82490640d0bbe54da4268af9cca5abb,
+        type: 2}
+      propertyPath: defenseSkill
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1171220811949464, guid: b82490640d0bbe54da4268af9cca5abb, type: 2}
+      propertyPath: m_TagString
+      value: Bowman
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b82490640d0bbe54da4268af9cca5abb, type: 2}
@@ -463,7 +549,7 @@ MonoBehaviour:
     tileVisualPrefab: {fileID: 1465037824773452, guid: d7c72b8e2c0d05a4b82668636b7d7858,
       type: 2}
     movementCost: 999
-    originalColor: {r: 0.8161765, g: 1, b: 1, a: 0}
+    originalColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!4 &700908719
 Transform:
   m_ObjectHideFlags: 0
@@ -497,37 +583,11 @@ MonoBehaviour:
   - {fileID: 1433814720}
   - {fileID: 1510621067}
   map: {fileID: 700908718}
---- !u!1 &735295315
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 1798868197098056, guid: b02545e22bd4bcb438f22db9c8916f19,
-    type: 2}
-  m_PrefabInternal: {fileID: 281681252}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 735295316}
-  m_Layer: 0
-  m_Name: Spearman
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &735295316
+--- !u!4 &735295316 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 4698104311686662, guid: b02545e22bd4bcb438f22db9c8916f19,
+  m_PrefabParentObject: {fileID: 4112309926922718, guid: b701e66d097f96f46814294782efd603,
     type: 2}
   m_PrefabInternal: {fileID: 281681252}
-  m_GameObject: {fileID: 735295315}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.4, y: 0.6, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1189588236}
-  m_Father: {fileID: 1637629052}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1088683900
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,7 +603,7 @@ GameObject:
   - component: {fileID: 1088683905}
   m_Layer: 0
   m_Name: Capsule
-  m_TagString: Untagged
+  m_TagString: Griffin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -639,126 +699,26 @@ MonoBehaviour:
     y: 1.1
     z: -6.6
   isBotUnit: 0
+  attackSkill: 8
+  defenseSkill: 8
+  damageMin: 3
+  damageMax: 6
+  health: 15
   distance: 3
-  damage: 8
-  defense: 6
+  countOfWarrior: 5
+  shot: 0
+  damageResult: 0
+  teamDamage: -2147483648
+  teamHealth: -2147483648
+  lastWarriorDamage: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
---- !u!1 &1189588235
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 1134306972781016, guid: b02545e22bd4bcb438f22db9c8916f19,
-    type: 2}
-  m_PrefabInternal: {fileID: 281681252}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1189588236}
-  - component: {fileID: 1189588239}
-  - component: {fileID: 1189588238}
-  - component: {fileID: 1189588237}
-  - component: {fileID: 1189588240}
-  m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1189588236
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 4868514780705966, guid: b02545e22bd4bcb438f22db9c8916f19,
-    type: 2}
-  m_PrefabInternal: {fileID: 281681252}
-  m_GameObject: {fileID: 1189588235}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 735295316}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1189588237
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 23621786836978802, guid: b02545e22bd4bcb438f22db9c8916f19,
-    type: 2}
-  m_PrefabInternal: {fileID: 281681252}
-  m_GameObject: {fileID: 1189588235}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: 2901cc851b14e4d459422a8932171dbe, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!65 &1189588238
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 65405386455780784, guid: b02545e22bd4bcb438f22db9c8916f19,
-    type: 2}
-  m_PrefabInternal: {fileID: 281681252}
-  m_GameObject: {fileID: 1189588235}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!33 &1189588239
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 33166947836848432, guid: b02545e22bd4bcb438f22db9c8916f19,
-    type: 2}
-  m_PrefabInternal: {fileID: 281681252}
-  m_GameObject: {fileID: 1189588235}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1189588240
+--- !u!114 &1189588240 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114956520046126062, guid: b02545e22bd4bcb438f22db9c8916f19,
+  m_PrefabParentObject: {fileID: 114636987942032698, guid: b701e66d097f96f46814294782efd603,
     type: 2}
   m_PrefabInternal: {fileID: 281681252}
-  m_GameObject: {fileID: 1189588235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 346c106b568e57d4380da0571fd410a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  localPosition:
-    x: 0
-    y: 4
-  worldPosition:
-    x: -9.4
-    y: 0.6
-    z: 0
-  isBotUnit: 0
-  distance: 1
-  damage: 2
-  defense: 3
-  startColor: {r: 0, g: 0, b: 0, a: 0}
-  availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1286356728
 GameObject:
   m_ObjectHideFlags: 0
@@ -937,6 +897,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 3f2b8fcf24b9a8f4c9d8af0edb9a08cc, type: 2}
+    - target: {fileID: 1121667853957218, guid: 707ce8df75afd4546b7e080689663d16, type: 2}
+      propertyPath: m_TagString
+      value: Spearman
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 707ce8df75afd4546b7e080689663d16, type: 2}
   m_IsPrefabParent: 0
@@ -955,7 +919,7 @@ GameObject:
   - component: {fileID: 1411578719}
   m_Layer: 0
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: Bowman
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1050,9 +1014,18 @@ MonoBehaviour:
     y: 0.6
     z: 6.6
   isBotUnit: 0
+  attackSkill: 6
+  defenseSkill: 3
+  damageMin: 2
+  damageMax: 3
+  health: 10
   distance: 2
-  damage: 3
-  defense: 4
+  countOfWarrior: 5
+  shot: 8
+  damageResult: 0
+  teamDamage: -2147483648
+  teamHealth: -2147483648
+  lastWarriorDamage: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1001 &1420071631
@@ -1124,6 +1097,55 @@ Prefab:
       propertyPath: worldPosition.z
       value: -6.6
       objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: health
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: attack
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: defense
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: damage
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: countOfWarrior
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: damageMin
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: damageMax
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1872562474132986, guid: db4b4da83ac3d4d45993ef588082b480, type: 2}
+      propertyPath: m_TagString
+      value: Griffin
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: attackSkill
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114365854274241162, guid: db4b4da83ac3d4d45993ef588082b480,
+        type: 2}
+      propertyPath: defenseSkill
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: db4b4da83ac3d4d45993ef588082b480, type: 2}
   m_IsPrefabParent: 0
@@ -1139,9 +1161,10 @@ GameObject:
   - component: {fileID: 1433814718}
   - component: {fileID: 1433814717}
   - component: {fileID: 1433814720}
+  - component: {fileID: 1433814721}
   m_Layer: 0
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: Bowman
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1231,11 +1254,33 @@ MonoBehaviour:
     y: 0.6
     z: 6.6
   isBotUnit: 1
+  attackSkill: 6
+  defenseSkill: 3
+  damageMin: 2
+  damageMax: 3
+  health: 10
   distance: 2
-  damage: 3
-  defense: 4
+  countOfWarrior: 5
+  shot: 8
+  damageResult: 0
+  teamDamage: -2147483648
+  teamHealth: -2147483648
+  lastWarriorDamage: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &1433814721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1433814715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77110813975123241b002ca43bc11261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCursor: {fileID: 2800000, guid: d4484d350e72d0d49b4a228d0c398abf, type: 3}
+  defaultCursor: {fileID: 2800000, guid: 4b3f35faf49a5b54fb1c7dcf0c0bc3d2, type: 3}
 --- !u!1 &1510621062
 GameObject:
   m_ObjectHideFlags: 0
@@ -1248,9 +1293,10 @@ GameObject:
   - component: {fileID: 1510621065}
   - component: {fileID: 1510621064}
   - component: {fileID: 1510621067}
+  - component: {fileID: 1510621068}
   m_Layer: 0
   m_Name: Capsule
-  m_TagString: Untagged
+  m_TagString: Griffin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1341,11 +1387,33 @@ MonoBehaviour:
     y: 1.1
     z: -6.6
   isBotUnit: 1
+  attackSkill: 8
+  defenseSkill: 8
+  damageMin: 3
+  damageMax: 6
+  health: 15
   distance: 3
-  damage: 8
-  defense: 6
+  countOfWarrior: 5
+  shot: 0
+  damageResult: 0
+  teamDamage: -2147483648
+  teamHealth: -2147483648
+  lastWarriorDamage: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &1510621068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1510621062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77110813975123241b002ca43bc11261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCursor: {fileID: 2800000, guid: d4484d350e72d0d49b4a228d0c398abf, type: 3}
+  defaultCursor: {fileID: 2800000, guid: 4b3f35faf49a5b54fb1c7dcf0c0bc3d2, type: 3}
 --- !u!1 &1586214115
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,7 +1483,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1650431271}
   m_Layer: 0
-  m_Name: GriffinAI
+  m_Name: Griffin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
