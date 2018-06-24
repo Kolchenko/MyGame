@@ -56,7 +56,7 @@ public class Unit : MonoBehaviour {
     public int teamDamage = NOT_INITIALIZED_PARAM;
     public int teamHealth = NOT_INITIALIZED_PARAM;
     public int lastWarriorDamage = 0;
-
+    
     public List<Node> currentPath;
     public List<Node> currentPathToEnemy;
 
@@ -100,9 +100,24 @@ public class Unit : MonoBehaviour {
     {
         return DistanceTo(enemy) <= distance;
     }
-        
+
+    public void Approach()
+    {
+        if (currentPathToEnemy != null)
+        {
+            WorldPosition moveTo = PositionConverter.ToWorldCoordinates(new LocalPosition(
+                currentPathToEnemy[currentPathToEnemy.Count - 1].x, 
+                currentPathToEnemy[currentPathToEnemy.Count - 1].y));
+            moveTo.y = transform.position.y;
+            //StartCoroutine(MoveObject.MoveUnit(moveTo));
+            transform.position = moveTo.ToVector3();
+            UpdatePosition(moveTo);
+        }
+    }
+
     public void Attack(Unit enemy)
-    {        
+    {
+        Approach();
         MakeDamage(enemy);
     }
 
@@ -123,10 +138,12 @@ public class Unit : MonoBehaviour {
             if (enemy.isBotUnit)
             {
                 BoardManager.Instance.enemyUnits.Remove(enemy);
+                Bot.botTeam.Remove(enemy); //todo: refactor
             }
             else
             {
                 BoardManager.Instance.playerUnits.Remove(enemy);
+                Human.humanTeam.Remove(enemy); //todo: refactor
             }
             Destroy(enemy.gameObject);            
         }

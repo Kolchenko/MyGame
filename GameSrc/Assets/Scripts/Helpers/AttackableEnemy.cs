@@ -12,6 +12,8 @@ public class AttackableEnemy : MonoBehaviour {
             var enemyUnit = gameObject.GetComponent<Unit>();
             var selectedUnit = BoardManager.selectedUnit;
             selectedUnit.Attack(enemyUnit);
+            GameManager.Instance.checkGameState();
+            Unit.isHumanMakeTurn = true;
         }
     }
 
@@ -25,7 +27,7 @@ public class AttackableEnemy : MonoBehaviour {
 
     private void OnMouseExit()
     {
-        Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.Auto);
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
     private bool CanAttack()

@@ -11,7 +11,7 @@ public class ClickableAvailableTile : MonoBehaviour {
         LocalPosition clickedTileLocalPos = PositionConverter.ToLocalCoordinates(new WorldPosition(tileX, 0, tileY));
         Node clickedTtile = BoardManager.Instance.map.graph[clickedTileLocalPos.x, clickedTileLocalPos.y];
 
-        if (BoardManager.selectedUnit != null && BoardManager.Instance.isAvailableClickedTile(clickedTtile))
+        if (BoardManager.selectedUnit != null && BoardManager.Instance.isAvailableClickedTile(clickedTtile) && !GameManager.isGameOver)
         {
             BoardManager.Instance.GeneratePathTo(tileX, tileY);
             BoardManager.selectedUnit.MoveToEnterTile();

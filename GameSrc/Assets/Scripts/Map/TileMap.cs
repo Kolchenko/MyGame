@@ -57,22 +57,31 @@ public class TileMap : MonoBehaviour
                 #region get tile type
                 TileType tt;
                 int tileType = 0;
-                if (x > width / 3)
-                {
-                    tileType = rand.Next(2);
-                }
+                //if (x > width / 3)
+                //{
+                //    tileType = rand.Next(2);
+                //}
 
-                if (tileType == 1 && countMountainTile != mountainLimit)
+                //if (tileType == 1 && countMountainTile != mountainLimit)
+                //{
+                //    tt = tileTypes[1];
+                //    ++countMountainTile;
+                //}
+                //else
+                //{
+                //tt = tileTypes[0];
+                //}
+                #endregion
+
+                if (x == 4 && y == 0 || x == 5 && y == 3 || x == 6 && y == 3 || x == 5 && y == 5 || x == 6 && y == 5 || x == 4 && y == 8)
                 {
                     tt = tileTypes[1];
-                    ++countMountainTile;
                 }
                 else
                 {
                     tt = tileTypes[0];
                 }
-                #endregion
-                
+
                 LocalPosition tilePos = new LocalPosition(x, y);
 
                 Transform tile = Instantiate(tt.tileVisualPrefab.transform) as Transform;

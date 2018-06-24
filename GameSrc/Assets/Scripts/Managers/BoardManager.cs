@@ -207,6 +207,8 @@ public class BoardManager : MonoBehaviour {
 
         Node source = map.graph[sourceLocalPos.x, sourceLocalPos.y];
         Node target = map.graph[targetLocalPos.x, targetLocalPos.y];
+        Node currentUnitPos = map.graph[selectedUnit.localPosition.x, selectedUnit.localPosition.y];
+        GetAvailableMovementTiles(selectedUnit.availableMovementTiles, currentUnitPos);
 
         if (selectedUnit.CanAttack(enemy))
         {
@@ -247,7 +249,7 @@ public class BoardManager : MonoBehaviour {
                 {
                     if (selectedUnit.availableMovementTiles.Contains(v) || (v.x == enemy.localPosition.x && v.y == enemy.localPosition.y))
                     {
-                        float alt = dist[u] + u.DistanceTo(v); //without calc tile cost
+                        float alt = dist[u] + u.DistanceTo(v); //without calc tile cost                        
                         if (alt < dist[v])
                         {
                             dist[v] = alt;
@@ -274,6 +276,7 @@ public class BoardManager : MonoBehaviour {
                 }
 
                 currentPathToEnemy.Reverse();
+                currentPathToEnemy.RemoveAt(currentPathToEnemy.Count - 1);
                 selectedUnit.currentPathToEnemy = currentPathToEnemy;
             }
         }
@@ -344,10 +347,52 @@ public class BoardManager : MonoBehaviour {
             }
         }
     }
-    
+
+    public List<Unit> GetAvailableHumanUnitsForAttack()
+    {
+        List<Unit> availableUnit = new List<Unit>();
+        foreach (var item in Instance.playerUnits)
+        {
+            int distance = selectedUnit.DistanceTo(item);
+            if (selectedUnit.distance >= distance)
+            {
+                availableUnit.Add(item);
+            }
+        }
+
+        return availableUnit;
+    }
+
     public bool isAvailableClickedTile(Node tile)
     {
         return selectedUnit.availableMovementTiles.Contains(tile);
     }
 
+    public bool isUnitOccupiedNode(Node node, bool isBotTeam)
+    {
+        List<Unit> team = isBotTeam ? enemyUnits : playerUnits;        
+        foreach (var item in playerUnits)
+        {
+            if (item.localPosition.x == node.x && item.localPosition.y == node.y)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    } 
+
+    public Unit GetUnitByNode(Node node, bool isBotTeam)
+    {
+        List<Unit> team = isBotTeam ? enemyUnits : playerUnits;
+        foreach (var item in team)
+        {
+            if (item.localPosition.x == node.x && item.localPosition.y == node.y)
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
 }

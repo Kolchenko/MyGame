@@ -17,7 +17,7 @@ public class Human {
     {
         //humanTeam.OrderBy(dist => dist.distance);
 
-        foreach (var item in humanTeam)
+        foreach (var item in BoardManager.Instance.playerUnits)
         {
             BoardManager.Instance.SelectUnit(item);
             // todo: остальные юниты задизейблить совсем, мышь доступна только на выделенных тайлах

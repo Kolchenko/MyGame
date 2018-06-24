@@ -8,26 +8,21 @@ using UnityEngine;
 public class Bot
 {
     const int START_INITIATIVE = 0;
-    const int DEPTH_OF_TREE = 1; //todo: temporary
-    int countOfUnits = 0;
+    const int DEPTH_OF_TREE = 1; //todo: tmp
 
-    public class Pair<T, U>
-    {
-        public Pair()
-        {
-        }
-
-        public Pair(T first, U second)
-        {
-            First = first;
-            Second = second;
-        }
-
-        public T First { get; set; }
-        public U Second { get; set; }
+    readonly Dictionary<string, int> materialEvalue = new Dictionary<string, int>() {
+        { "Spearman", 100 },
+        { "Bowman",   200 },
+        { "Griffin",  300 },
     };
 
-    private List<Unit> botTeam;
+    readonly Dictionary<string, int> positionEvalue = new Dictionary<string, int>() {
+        { "Spearman", 16 },
+        { "Bowman",   21 },
+        { "Griffin",  26 },
+    };    
+
+    public static List<Unit> botTeam;
 
     public Bot()
     {
@@ -38,26 +33,24 @@ public class Bot
 
     public void Do()
     {
-        botTeam = BoardManager.Instance.enemyUnits;
-        countOfUnits = botTeam.Count; // todo: remove
-        Node[] startTeamPos = GetCurrentTeamPosition(botTeam);
-        Node[] testTeamPos = new Node[botTeam.Count];
-        scores.Clear(); //todo: remove
-        var bestMove = MakeBestMove(startTeamPos, DEPTH_OF_TREE, START_INITIATIVE, isBotTeam, Mathf.NegativeInfinity, Mathf.Infinity, testTeamPos);
-        botTeam = BoardManager.Instance.enemyUnits;
-        MoveTeamPosition(bestMove.Second, botTeam);
-        Turn.isHumanTurn = true;
+        if (botTeam.Count != 0)
+        {
+            botTeam = BoardManager.Instance.enemyUnits;
+            Node[] startTeamPos = GetCurrentTeamPosition(botTeam);
+            Node[] testTeamPos = new Node[botTeam.Count];
+            var bestMove = MakeBestMove(startTeamPos, DEPTH_OF_TREE, START_INITIATIVE, isBotTeam, Mathf.NegativeInfinity, Mathf.Infinity, testTeamPos);    
+            botTeam = BoardManager.Instance.enemyUnits;
+            MoveTeamPosition(bestMove.Second, botTeam);
+            Turn.isHumanTurn = true;
+        }
     }
 
-    List<Pair<float, Node[]>> allMoves = new List<Pair<float, Node[]>>();
-    List<float> scores = new List<float>();
-
     // Alpha-beta pruning
-    private Pair<float, Node[]> MakeBestMove(Node[] teamPos, int depth, int initiative, bool isBotTeam, float alpha, float beta, Node[] testTeamPos)
+    private Pair<float, Node[]> MakeBestMove(Node[] teamPos, int depth, int initiative, bool isBotTeam, float alpha, float beta, Node[] teamPos3lvl)
     {
         if ((DEPTH_OF_TREE == 1 && depth == 0) || (DEPTH_OF_TREE != 1 && depth == 1))
         {
-            return GetHeuristicEvaluation(teamPos);
+            return GetHeuristicEvaluation(teamPos, isBotTeam);
         }
 
         Pair<float, Node[]> bestMove = new Pair<float, Node[]>();
@@ -80,15 +73,17 @@ public class Bot
         for (int i = 0; i < allAvailableUnitMoves.Count; ++i)
         {
             Node unitPosition = allAvailableUnitMoves[i];
+            bool isOccupiedNode = BoardManager.Instance.isUnitOccupiedNode(unitPosition, isBotTeam);
+            Node neighbourEnemyPos = null;
 
             UpdateTeamPosition(currentTeam, unitPosition, initiative == 0 ? currentTeam.Count - 1 : initiative - 1 /*prev unit*/);
 
             if (depth == DEPTH_OF_TREE && isBotTeam)
             {
-                testTeamPos[initiative - 1] = unitPosition;             
+                teamPos3lvl[initiative - 1] = neighbourEnemyPos == null ? unitPosition : neighbourEnemyPos;             
             } else if (depth == DEPTH_OF_TREE - 1 && !isBotTeam && initiative == START_INITIATIVE)
             {
-                testTeamPos[currentTeam.Count - 1] = unitPosition;
+                teamPos3lvl[currentTeam.Count - 1] = neighbourEnemyPos == null ? unitPosition : neighbourEnemyPos;
             }
 
 
@@ -104,19 +99,18 @@ public class Bot
             }
             #endregion
 
-            Pair<float, Node[]> tmpResult = MakeBestMove(newTeamPosition, depth, initiative, isBotTeam, -beta, -bestMove.First, testTeamPos);
+            Pair<float, Node[]> tmpResult = MakeBestMove(newTeamPosition, depth, initiative, isBotTeam, -beta, -bestMove.First, teamPos3lvl);
             UpdateTeamPosition(teamPos, currentTeam);
 
             if (tmpResult.First > bestMove.First)
             {
                 bestMove.First = tmpResult.First;
-                scores.Add(bestMove.First);
-                if (((DEPTH_OF_TREE == 1 && depth == 0) || (DEPTH_OF_TREE != 1 && depth == 1)) && !isBotTeam && initiative == 0)
+                if (((DEPTH_OF_TREE == 1 && depth == 0 && !isBotTeam) || (DEPTH_OF_TREE != 1 && depth == 1 && isBotTeam)) && initiative == 0)
                 {
-                    bestMove.Second = new Node[testTeamPos.Length];
-                    for (int j = 0; j < testTeamPos.Length; ++j)
+                    bestMove.Second = new Node[teamPos3lvl.Length];
+                    for (int j = 0; j < teamPos3lvl.Length; ++j)
                     {
-                        bestMove.Second[j] = new Node(testTeamPos[j]);
+                        bestMove.Second[j] = new Node(teamPos3lvl[j]);
                     }
                 }
                 else
@@ -125,7 +119,7 @@ public class Bot
                 }
             }
 
-            if (-bestMove.First > beta) // todo: >
+            if (-bestMove.First > beta)
             {
                 break;
             }
@@ -160,19 +154,36 @@ public class Bot
             WorldPosition unitWorldPos = PositionConverter.ToWorldCoordinates(new LocalPosition(teamPosition[i].x, teamPosition[i].y));
             unitWorldPos.y = y;
             BoardManager.selectedUnit = team[i];
-            BoardManager.Instance.GeneratePathTo(unitWorldPos.x, unitWorldPos.z);
-            BoardManager.selectedUnit.MoveToEnterTile();
-            team[i].transform.position = unitWorldPos.ToVector3();
-            team[i].UpdatePosition(unitWorldPos);
+
+            if (BoardManager.Instance.isUnitOccupiedNode(teamPosition[i], true))
+            {
+                Debug.Log(team[i].tag + ": attack to " + teamPosition[i].x + " " + teamPosition[i].y);
+                Unit defUnit = BoardManager.Instance.GetUnitByNode(teamPosition[i], false);
+                BoardManager.Instance.GeneratePathToEnemy(defUnit);
+                var path = BoardManager.selectedUnit.currentPathToEnemy;
+                if (path != null)
+                {
+                    unitWorldPos = PositionConverter.ToWorldCoordinates(new LocalPosition(path[path.Count - 1].x, path[path.Count - 1].y));
+                }
+                BoardManager.selectedUnit.Attack(defUnit);
+            }
+            else
+            {                
+                BoardManager.Instance.GeneratePathTo(unitWorldPos.x, unitWorldPos.z);
+                BoardManager.selectedUnit.MoveToEnterTile();
+                team[i].transform.position = unitWorldPos.ToVector3();
+                team[i].UpdatePosition(unitWorldPos);
+            }
         }
     }
 
-    private Pair<float, Node[]> GetHeuristicEvaluation(Node[] teamPosition)
+    private Pair<float, Node[]> GetHeuristicEvaluation(Node[] teamPosition, bool isBotTeam)
     {
         int value = 0;
         foreach (var unitPosition in teamPosition)
         {
-            value += BoardManager.Instance.map.width - unitPosition.x;
+            int[,] fieldEvaluationValue = GetEvaluationField(isBotTeam);
+            value += fieldEvaluationValue[unitPosition.y, unitPosition.x];
         }
 
         return new Pair<float, Node[]>(value, teamPosition);
@@ -184,6 +195,13 @@ public class Bot
         List<Node> moves = new List<Node>();
         LocalPosition localPos = PositionConverter.ToLocalCoordinates(unit.worldPosition);
         BoardManager.Instance.GetAvailableMovementTiles(moves, BoardManager.Instance.map.graph[localPos.x, localPos.y]);
+
+        List<Unit> availableHumanUnitsForAttack = BoardManager.Instance.GetAvailableHumanUnitsForAttack();
+
+        foreach (var item in availableHumanUnitsForAttack)
+        {
+            moves.Add(BoardManager.Instance.map.graph[item.localPosition.x, item.localPosition.y]);
+        }
 
         return moves;
     }
@@ -198,5 +216,36 @@ public class Bot
         }
 
         return teamPosition;
+    }
+
+    private int[,] GetEvaluationField(bool isBotTeam)
+    {
+        int height = BoardManager.Instance.map.height;
+        int width = BoardManager.Instance.map.width;
+        int[,] fieldEvaluationValue = new int[height, width];
+
+        var team = Human.humanTeam;
+
+        foreach (var item in team)
+        {
+            int startEvaluation = positionEvalue[item.tag];
+            for (int i = 0; i < height; ++i)
+            {
+                for (int j = 0; j < width; ++j)
+                {
+                    int diffHeight = Math.Abs(i - item.localPosition.y);
+                    int diffWidth = Math.Abs(j - item.localPosition.x);
+                    int evalue = startEvaluation - Math.Max(diffHeight, diffWidth);
+                    fieldEvaluationValue[i, j] += evalue;
+                }
+            }
+        }
+
+        foreach (var item in team)
+        {
+            fieldEvaluationValue[item.localPosition.y, item.localPosition.x] =  materialEvalue[item.tag];
+        }
+
+        return fieldEvaluationValue;
     }
 }
