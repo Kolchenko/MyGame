@@ -27,8 +27,12 @@ public class TileMap : MonoBehaviour
 
     void AddGap()
     {
-        hexWidth += hexWidth * gap;
-        hexHeight += hexHeight * gap;
+        if (!GameManager.isMapSetUp)
+        {
+            hexWidth += hexWidth * gap;
+            hexHeight += hexHeight * gap;
+            GameManager.isMapSetUp = true;
+        }
     }
 
     void CalcStartPos()

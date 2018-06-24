@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour {
     private Human human;
     public event EventHandler gameOverEvent;
     public static bool isGameOver = false;
+    public static bool isMapSetUp = false;
+    public static bool isReloadGame = false;
 
     private void OnGameOver()
     {
@@ -33,8 +35,10 @@ public class GameManager : MonoBehaviour {
     {
         Debug.Log("GameManagerAwake");
         Instance = this;
+        isReloadGame = false;
         bot = new Bot();
         human = new Human();
+        Turn.RestartFlags();
     }
 
     private void Update()
@@ -44,6 +48,7 @@ public class GameManager : MonoBehaviour {
             while (Turn.isHumanTurn)
             {
                 StartCoroutine(Human.Do());
+                Debug.Log("Human.Do()");
                 checkGameState();
                 Turn.isHumanTurn = false;
             }
@@ -62,7 +67,7 @@ public class GameManager : MonoBehaviour {
         if (BoardManager.Instance.playerUnits.Count == 0 || BoardManager.Instance.enemyUnits.Count == 0)
         {
             OnGameOver();
-        }
+        }        
     }
 
     public bool isWon()
