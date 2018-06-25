@@ -73,17 +73,15 @@ public class Bot
         for (int i = 0; i < allAvailableUnitMoves.Count; ++i)
         {
             Node unitPosition = allAvailableUnitMoves[i];
-            bool isOccupiedNode = BoardManager.Instance.isUnitOccupiedNode(unitPosition, isBotTeam);
-            Node neighbourEnemyPos = null;
 
             UpdateTeamPosition(currentTeam, unitPosition, initiative == 0 ? currentTeam.Count - 1 : initiative - 1 /*prev unit*/);
 
             if (depth == DEPTH_OF_TREE && isBotTeam)
             {
-                teamPos3lvl[initiative - 1] = neighbourEnemyPos == null ? unitPosition : neighbourEnemyPos;             
+                teamPos3lvl[initiative - 1] = unitPosition;             
             } else if (depth == DEPTH_OF_TREE - 1 && !isBotTeam && initiative == START_INITIATIVE)
             {
-                teamPos3lvl[currentTeam.Count - 1] = neighbourEnemyPos == null ? unitPosition : neighbourEnemyPos;
+                teamPos3lvl[currentTeam.Count - 1] = unitPosition;
             }
 
 

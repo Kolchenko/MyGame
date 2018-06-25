@@ -9,6 +9,7 @@ public class BoardManager : MonoBehaviour {
     static public Unit selectedUnit;
     public static Color startPlayerColor;
     public static Color selectedPlayerColor = new Color(0.1f, 0.1f, 0.9f);
+    public Transform target = null;
     List<Node> currentPath = null;
     List<Node> currentPathToEnemy = null;
     public TileMap map = null;
@@ -208,6 +209,11 @@ public class BoardManager : MonoBehaviour {
         Node source = map.graph[sourceLocalPos.x, sourceLocalPos.y];
         Node target = map.graph[targetLocalPos.x, targetLocalPos.y];
         Node currentUnitPos = map.graph[selectedUnit.localPosition.x, selectedUnit.localPosition.y];
+        if (selectedUnit.availableMovementTiles == null)
+        {
+            selectedUnit.availableMovementTiles = new List<Node>();            
+        }
+
         GetAvailableMovementTiles(selectedUnit.availableMovementTiles, currentUnitPos);
 
         if (selectedUnit.CanAttack(enemy))
@@ -277,6 +283,7 @@ public class BoardManager : MonoBehaviour {
 
                 currentPathToEnemy.Reverse();
                 currentPathToEnemy.RemoveAt(currentPathToEnemy.Count - 1);
+                
                 selectedUnit.currentPathToEnemy = currentPathToEnemy;
             }
         }
@@ -354,7 +361,7 @@ public class BoardManager : MonoBehaviour {
         foreach (var item in Instance.playerUnits)
         {
             int distance = selectedUnit.DistanceTo(item);
-            if (selectedUnit.distance >= distance)
+            if (selectedUnit.distance >= distance || selectedUnit.tag == "Bowman")
             {
                 availableUnit.Add(item);
             }

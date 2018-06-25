@@ -63,7 +63,7 @@ public class Unit : MonoBehaviour {
     public Color startColor;
     public Color availableTileColor;
     public List<Node> availableMovementTiles = null;
-
+    
     public void UpdatePosition(WorldPosition worldPosition)
     {
         this.worldPosition = worldPosition;
@@ -98,6 +98,11 @@ public class Unit : MonoBehaviour {
 
     public bool CanAttack(Unit enemy)
     {
+        if (tag == "Bowman")
+        {
+            return true;
+        }
+
         return DistanceTo(enemy) <= distance;
     }
 

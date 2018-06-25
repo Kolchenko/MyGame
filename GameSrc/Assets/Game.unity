@@ -351,7 +351,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 142027338}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 543, y: 226, z: 0}
+  m_LocalPosition: {x: 537.5, y: 226, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1399419031}
@@ -924,6 +924,7 @@ MonoBehaviour:
   - {fileID: 265169741}
   - {fileID: 1433814720}
   - {fileID: 1510621067}
+  target: {fileID: 0}
   map: {fileID: 700908718}
 --- !u!1 &793433212
 GameObject:
@@ -1859,6 +1860,8 @@ MonoBehaviour:
   lastWarriorDamage: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
+  speed: 1
+  speed_a: 1
 --- !u!1001 &1420071631
 Prefab:
   m_ObjectHideFlags: 0
@@ -2099,6 +2102,8 @@ MonoBehaviour:
   lastWarriorDamage: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   availableTileColor: {r: 0, g: 0, b: 0, a: 0}
+  speed: 1
+  speed_a: 1
 --- !u!114 &1433814721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3009,7 +3014,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1894011487}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -253.10095, y: -12.729843, z: -11.625}
+  m_LocalPosition: {x: -258.60095, y: -12.729843, z: -11.625}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 975615738}

@@ -32,6 +32,10 @@ public class AttackableEnemy : MonoBehaviour {
 
     private bool CanAttack()
     {
+        if (BoardManager.selectedUnit.tag == "Bowman")
+        {
+            return true;
+        }
         var enemyUnit = gameObject.GetComponent<Unit>();
         var selectedUnit = BoardManager.selectedUnit;
         BoardManager.Instance.GeneratePathToEnemy(enemyUnit);
