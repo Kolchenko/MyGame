@@ -199,6 +199,25 @@ public class BoardManager : MonoBehaviour {
     public void GeneratePathToEnemy(Unit enemy)
     {
         selectedUnit.currentPathToEnemy = null;
+        // check the neighborhood of units
+        if (selectedUnit.DistanceTo(enemy) == 1)
+        {
+            Node enemyTile = map.graph[enemy.localPosition.x, enemy.localPosition.y];
+            List<Node> enemyTileNeighbours = enemyTile.neighbours;
+            Node selectedUnitTile = map.graph[selectedUnit.localPosition.x, selectedUnit.localPosition.y];
+            foreach (var item in enemyTileNeighbours)
+            {
+                if (selectedUnitTile.DistanceBetweenNode(item) == 1 && 
+                    map.tiles[item.x, item.y] != 1 /*todo: enum*/ &&
+                    !isUnitOccupiedNode(item))
+                {
+                    currentPathToEnemy = new List<Node>();
+                    currentPathToEnemy.Add(item);
+                    selectedUnit.currentPathToEnemy = currentPathToEnemy;
+                    return;
+                }
+            }
+        }
         Dictionary<Node, float> dist = new Dictionary<Node, float>();
         Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
         List<Node> unvisited = new List<Node>();
@@ -211,7 +230,7 @@ public class BoardManager : MonoBehaviour {
         Node currentUnitPos = map.graph[selectedUnit.localPosition.x, selectedUnit.localPosition.y];
         if (selectedUnit.availableMovementTiles == null)
         {
-            selectedUnit.availableMovementTiles = new List<Node>();            
+            selectedUnit.availableMovementTiles = new List<Node>();
         }
 
         GetAvailableMovementTiles(selectedUnit.availableMovementTiles, currentUnitPos);
@@ -283,7 +302,6 @@ public class BoardManager : MonoBehaviour {
 
                 currentPathToEnemy.Reverse();
                 currentPathToEnemy.RemoveAt(currentPathToEnemy.Count - 1);
-                
                 selectedUnit.currentPathToEnemy = currentPathToEnemy;
             }
         }
@@ -375,9 +393,30 @@ public class BoardManager : MonoBehaviour {
         return selectedUnit.availableMovementTiles.Contains(tile);
     }
 
-    public bool isUnitOccupiedNode(Node node, bool isBotTeam)
+    public bool isUnitOccupiedNode(Node node)
     {
-        List<Unit> team = isBotTeam ? enemyUnits : playerUnits;        
+        foreach (var item in playerUnits)
+        {
+            if (item.localPosition.x == node.x && item.localPosition.y == node.y)
+            {
+                return true;
+            }
+        }
+
+        foreach (var item in enemyUnits)
+        {
+            if (item.localPosition.x == node.x && item.localPosition.y == node.y)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool isUnitOccupiedNodeByTeam(Node node, bool isBotTeam)
+    {
+        List<Unit> team = !isBotTeam ? enemyUnits : playerUnits;        
         foreach (var item in playerUnits)
         {
             if (item.localPosition.x == node.x && item.localPosition.y == node.y)

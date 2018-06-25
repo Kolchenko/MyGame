@@ -30,4 +30,16 @@ public class Node
             new Vector2(node.x, node.y)
             );
     }
+
+    public int DistanceBetweenNode(Node node)
+    {
+        int x0 = x - Mathf.FloorToInt(y / 2);
+        int y0 = y;
+        int x1 = node.x - Mathf.FloorToInt(node.y / 2);
+        int y1 = node.y;
+        int dx = x1 - x0;
+        int dy = y1 - y0;
+
+        return Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy), Mathf.Abs(dx + dy));
+    }
 }

@@ -117,7 +117,7 @@ public class Bot
                 }
             }
 
-            if (-bestMove.First > beta)
+            if (-bestMove.First >= beta)
             {
                 break;
             }
@@ -153,7 +153,7 @@ public class Bot
             unitWorldPos.y = y;
             BoardManager.selectedUnit = team[i];
 
-            if (BoardManager.Instance.isUnitOccupiedNode(teamPosition[i], true))
+            if (BoardManager.Instance.isUnitOccupiedNodeByTeam(teamPosition[i], true))
             {
                 Debug.Log(team[i].tag + ": attack to " + teamPosition[i].x + " " + teamPosition[i].y);
                 Unit defUnit = BoardManager.Instance.GetUnitByNode(teamPosition[i], false);
