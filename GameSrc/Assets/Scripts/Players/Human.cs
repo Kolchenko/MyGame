@@ -13,13 +13,16 @@ public class Human {
         humanTeam = BoardManager.Instance.playerUnits.OfType<Unit>().ToList();
     }
 
+    public static bool isDoUnit = false;
+
     public static IEnumerator Do()
     {
         foreach (var item in BoardManager.Instance.playerUnits)
         {
             BoardManager.Instance.SelectUnit(item);
-            yield return new WaitUntil(() => Unit.isHumanMakeTurn == true);
+            yield return new WaitUntil(() => Unit.isHumanMakeTurn == true && isDoUnit == true);
             Unit.isHumanMakeTurn = false;
+            isDoUnit = false;
             BoardManager.Instance.DeselectUnit();
         }
 

@@ -48,7 +48,6 @@ public class GameManager : MonoBehaviour {
             while (Turn.isHumanTurn)
             {
                 StartCoroutine(Human.Do());
-                Debug.Log("Human.Do()");
                 checkGameState();
                 Turn.isHumanTurn = false;
             }

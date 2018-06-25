@@ -14,6 +14,7 @@ public class AttackableEnemy : MonoBehaviour {
             selectedUnit.Attack(enemyUnit);
             GameManager.Instance.checkGameState();
             Unit.isHumanMakeTurn = true;
+            Human.isDoUnit = true;
         }
     }
 
@@ -32,18 +33,21 @@ public class AttackableEnemy : MonoBehaviour {
 
     private bool CanAttack()
     {
-        if (BoardManager.selectedUnit.tag == "Bowman")
+        if (BoardManager.selectedUnit != null)
         {
-            return true;
-        }
-        var enemyUnit = gameObject.GetComponent<Unit>();
-        var selectedUnit = BoardManager.selectedUnit;
-        BoardManager.Instance.GeneratePathToEnemy(enemyUnit);
-        if (selectedUnit.currentPathToEnemy != null && selectedUnit.currentPathToEnemy.Count <= selectedUnit.distance + 1)
-        {
-            return true;
-        }
+            if (BoardManager.selectedUnit.tag == "Bowman")
+            {
+                return true;
+            }
+            var enemyUnit = gameObject.GetComponent<Unit>();
+            var selectedUnit = BoardManager.selectedUnit;
+            BoardManager.Instance.GeneratePathToEnemy(enemyUnit);
+            if (selectedUnit.currentPathToEnemy != null && selectedUnit.currentPathToEnemy.Count <= selectedUnit.distance + 1)
+            {
+                return true;
+            }
 
+        }
         return false;
     }
 }

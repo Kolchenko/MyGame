@@ -27,7 +27,7 @@ public class PauseMenu : MonoBehaviour {
     {
         pauseMenuUI.SetActive(false);
         gameIsPaused = false;
-        MouseMoveableTile.isOnMouseUp = true;
+        //MouseMoveableTile.isOnMouseUp = true;
     }
 
     public void Pause()

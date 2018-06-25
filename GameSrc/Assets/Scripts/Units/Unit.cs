@@ -76,7 +76,8 @@ public class Unit : MonoBehaviour {
         {
             WorldPosition moveTo = PositionConverter.ToWorldCoordinates(new LocalPosition(currentPath[currentPath.Count - 1].x, currentPath[currentPath.Count - 1].y));
             moveTo.y = transform.position.y;
-            //StartCoroutine(MoveObject.MoveUnit(moveTo));
+            StartCoroutine(MoveObject.MoveUnitTo(moveTo, 0.1f));
+            StartCoroutine(MoveObject.DoLast());
             transform.position = moveTo.ToVector3();
             UpdatePosition(moveTo);
         }
@@ -114,7 +115,8 @@ public class Unit : MonoBehaviour {
                 currentPathToEnemy[currentPathToEnemy.Count - 1].x, 
                 currentPathToEnemy[currentPathToEnemy.Count - 1].y));
             moveTo.y = transform.position.y;
-            //StartCoroutine(MoveObject.MoveUnit(moveTo));
+            StartCoroutine(MoveObject.ApproachUnitTo(moveTo, 0.05f));
+            StartCoroutine(MoveObject.DoLast());
             transform.position = moveTo.ToVector3();
             UpdatePosition(moveTo);
         }

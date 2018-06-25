@@ -15,6 +15,18 @@ class PositionConverter
         return new WorldPosition(x, 0, z);
     }
 
+    public static WorldPosition ToWorldCoordinates(Node node)
+    {
+        float offset = 0;
+        if (node.y % 2 != 0)
+            offset = TileMap.hexWidth / 2;
+
+        float x = TileMap.startPos.x + node.x * TileMap.hexWidth + offset;
+        float z = TileMap.startPos.z - node.y * TileMap.hexHeight * 0.75f;
+
+        return new WorldPosition(x, 0, z);
+    }
+
     public static LocalPosition ToLocalCoordinates(WorldPosition worldPosition)
     {
         float offset = 0;
