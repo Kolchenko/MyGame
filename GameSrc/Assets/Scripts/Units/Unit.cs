@@ -136,6 +136,8 @@ public class Unit : MonoBehaviour {
         CalcDamageResult(enemy);
         teamDamage = (int)(damageResult * countOfWarrior);
 
+        FloatingTextController.CreateFloatingText(teamDamage.ToString(), enemy.worldPosition);
+
         enemy.teamHealth -= teamDamage;
 
         enemy.RecountWarriors();

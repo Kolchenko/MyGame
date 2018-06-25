@@ -41,6 +41,11 @@ public class GameManager : MonoBehaviour {
         Turn.RestartFlags();
     }
 
+    private void Start()
+    {
+        FloatingTextController.Initialize();
+    }
+
     private void Update()
     {
         if (BoardManager.Instance != null && !isGameOver)

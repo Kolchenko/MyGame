@@ -23,6 +23,11 @@ public class BoardManager : MonoBehaviour {
         map = GetComponent<TileMap>();
     }
 
+    private void Start()
+    {
+        //FloatingTextController.Initialize();
+    }
+
     public void SelectUnit(Unit unit)
     {
         if (unit != null)
