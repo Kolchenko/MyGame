@@ -40,7 +40,7 @@ public class PauseMenu : MonoBehaviour {
     public void LoadMenu()
     {
         gameIsPaused = false;
-        SceneManager.LoadScene(0 /*StartMenu*/); //todo: use enum
+        SceneManager.LoadScene((int)Scene.MAIN_MENU);
     }
 
     public void QuitGame()

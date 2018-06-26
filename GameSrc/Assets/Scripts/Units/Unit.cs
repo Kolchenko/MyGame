@@ -170,6 +170,7 @@ public class Unit : MonoBehaviour {
     {
         System.Random rand = new System.Random();
         damageResult = rand.Next(damageMin, damageMax + 1);
+        damageResult = damageResult == 0 ? 1 : damageResult;
         if (attackSkill > enemy.defenseSkill)
         {
             damageResult += damageResult * ATTACK_ADV_MULT;
@@ -186,4 +187,22 @@ public class Unit : MonoBehaviour {
         lastWarriorDamage = health - teamHealth % health;        
         BoardManager.Instance.RewriteCountOfWarriorValue(enemy, countOfWarrior);
     }    
+    
+    public string LocalizeTag()
+    {
+        if (tag == "Spearman")
+        {
+            return "Мечник";
+        }
+        else if (tag == "Bowman")
+        {
+            return "Лучник";
+        } 
+        else if (tag == "Griffin")
+        {
+            return "Грифон";
+        }
+
+        return "";
+    }
 }

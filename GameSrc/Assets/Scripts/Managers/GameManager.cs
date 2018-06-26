@@ -6,13 +6,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum MouseButton
-{
-    LEFT = 0,
-    RIGHT,
-    MIDDLE
-}
-
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
     private Bot bot;

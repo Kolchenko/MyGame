@@ -77,7 +77,7 @@ public class BoardManager : MonoBehaviour {
                     var go = collider.gameObject;
                     if (go.name.StartsWith("Hexagon"))
                     {
-                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
+                        if (map.tiles[item.x, item.y] != (int)TileTypes.SWAMP)
                         {
                             selectedUnit.startColor = go.GetComponent<Renderer>().material.GetColor("_Color");
                             selectedUnit.availableTileColor = selectedUnit.startColor;
@@ -107,7 +107,7 @@ public class BoardManager : MonoBehaviour {
                     foreach (var collider in colliders)
                     {
                         var gameObject = collider.gameObject;
-                        if (map.tiles[item.x, item.y] != 1 /*mountain*/)
+                        if (map.tiles[item.x, item.y] != (int)TileTypes.SWAMP)
                         {
                             GameObjectHighlighter.Deselect(selectedUnit.startColor, gameObject.GetComponent<Renderer>());
                         }
@@ -221,7 +221,7 @@ public class BoardManager : MonoBehaviour {
             foreach (var item in enemyTileNeighbours)
             {
                 if (selectedUnitTile.DistanceBetweenNode(item) == 1 && 
-                    map.tiles[item.x, item.y] != 1 /*todo: enum*/ &&
+                    map.tiles[item.x, item.y] != (int)TileTypes.SWAMP &&
                     !isUnitOccupiedNode(item))
                 {
                     currentPathToEnemy = new List<Node>();
@@ -355,7 +355,7 @@ public class BoardManager : MonoBehaviour {
             Node currentVertex = burningTiles.Dequeue();
             foreach (var item in currentVertex.neighbours)
             {
-                if (!visitedTiles.Contains(item) && map.tiles[item.x, item.y] != 1)
+                if (!visitedTiles.Contains(item) && map.tiles[item.x, item.y] != (int)TileTypes.SWAMP)
                 {
                     ++nextElementsToDepthIncrease;
                 }
