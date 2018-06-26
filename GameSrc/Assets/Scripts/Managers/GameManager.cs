@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour {
         isReloadGame = false;
         bot = new Bot();
         human = new Human();
-        Turn.RestartFlags();
+        Turn.RestartFlags();          
     }
 
     private void Start()
