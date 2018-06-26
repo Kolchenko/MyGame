@@ -8,12 +8,12 @@ using UnityEngine;
 public class Bot
 {
     const int START_INITIATIVE = 0;
-    const int DEPTH_OF_TREE = 1; //todo: tmp
+    const int DEPTH_OF_TREE = 3; //todo: tmp
 
     readonly Dictionary<string, int> materialEvalue = new Dictionary<string, int>() {
         { "Spearman", 100 },
         { "Bowman",   200 },
-        { "Griffin",  300 },
+        { "Griffin",  200 },
     };
 
     readonly Dictionary<string, int> positionEvalue = new Dictionary<string, int>() {

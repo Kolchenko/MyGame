@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameOver : MonoBehaviour {
 
@@ -17,4 +18,5 @@ public class GameOver : MonoBehaviour {
         gameOverPanel.gameObject.SetActive(true);
         textMeshPro.text = GameManager.Instance.isWon() ? "ПОБЕДА" : "ПОРАЖЕНИЕ";
     }
+
 }

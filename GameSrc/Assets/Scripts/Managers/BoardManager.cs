@@ -457,6 +457,7 @@ public class BoardManager : MonoBehaviour {
 
     public void RewriteCountOfWarriorValue(Unit unit, int countOfWarrior)
     {
+        countOfWarrior = countOfWarrior < 0 ? 0 : countOfWarrior;
         if (unit.isBotUnit)
         {
             switch (unit.tag)

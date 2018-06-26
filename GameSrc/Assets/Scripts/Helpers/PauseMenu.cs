@@ -27,7 +27,6 @@ public class PauseMenu : MonoBehaviour {
     {
         pauseMenuUI.SetActive(false);
         gameIsPaused = false;
-        //MouseMoveableTile.isOnMouseUp = true;
     }
 
     public void Pause()
@@ -40,6 +39,7 @@ public class PauseMenu : MonoBehaviour {
     public void LoadMenu()
     {
         gameIsPaused = false;
+        GameManager.isReloadGame = true;
         SceneManager.LoadScene((int)Scene.MAIN_MENU);
     }
 

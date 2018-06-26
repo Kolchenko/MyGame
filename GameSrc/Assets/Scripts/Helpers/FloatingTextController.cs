@@ -5,9 +5,12 @@ using UnityEngine;
 public class FloatingTextController : MonoBehaviour {
     private static FloatingText popupText;
     private static GameObject canvas;
+    public static bool isInitialize = false;
     
     public static void Initialize()
     {
+        isInitialize = true;
+        Time.timeScale = 1;
         canvas = GameObject.Find("Canvas");
         if (!popupText)
             popupText = Resources.Load<FloatingText>("Prefabs/PopupTextParent");

@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
         Debug.Log("GameManagerAwake");
         Instance = this;
         isReloadGame = false;
+        isGameOver = false;
         bot = new Bot();
         human = new Human();
         Turn.RestartFlags();          
