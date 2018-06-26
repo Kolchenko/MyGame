@@ -76,8 +76,8 @@ public class Unit : MonoBehaviour {
         {
             WorldPosition moveTo = PositionConverter.ToWorldCoordinates(new LocalPosition(currentPath[currentPath.Count - 1].x, currentPath[currentPath.Count - 1].y));
             moveTo.y = transform.position.y;
-            StartCoroutine(MoveObject.MoveUnitTo(moveTo, 0.1f));
-            StartCoroutine(MoveObject.DoLast());
+            //StartCoroutine(MoveObject.MoveUnitTo(moveTo, 0.1f));
+            //StartCoroutine(MoveObject.DoLast());
             transform.position = moveTo.ToVector3();
             UpdatePosition(moveTo);
         }
@@ -115,8 +115,8 @@ public class Unit : MonoBehaviour {
                 currentPathToEnemy[currentPathToEnemy.Count - 1].x, 
                 currentPathToEnemy[currentPathToEnemy.Count - 1].y));
             moveTo.y = transform.position.y;
-            StartCoroutine(MoveObject.ApproachUnitTo(moveTo, 0.05f));
-            StartCoroutine(MoveObject.DoLast());
+            //StartCoroutine(MoveObject.ApproachUnitTo(moveTo, 0.05f));
+            //StartCoroutine(MoveObject.DoLast());
             transform.position = moveTo.ToVector3();
             UpdatePosition(moveTo);
         }
@@ -140,7 +140,7 @@ public class Unit : MonoBehaviour {
 
         enemy.teamHealth -= teamDamage;
 
-        enemy.RecountWarriors();
+        enemy.RecountWarriors(enemy);
 
         if (enemy.countOfWarrior < 1)
         {
@@ -180,9 +180,10 @@ public class Unit : MonoBehaviour {
         }        
     }
 
-    private void RecountWarriors()
+    private void RecountWarriors(Unit enemy)
     {
         countOfWarrior = teamHealth / health;
-        lastWarriorDamage = health - teamHealth % health;
+        lastWarriorDamage = health - teamHealth % health;        
+        BoardManager.Instance.RewriteCountOfWarriorValue(enemy, countOfWarrior);
     }    
 }

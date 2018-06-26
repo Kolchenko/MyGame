@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour {
@@ -13,6 +14,13 @@ public class BoardManager : MonoBehaviour {
     List<Node> currentPath = null;
     List<Node> currentPathToEnemy = null;
     public TileMap map = null;
+
+    public TextMeshProUGUI BlueSpearmansValue;
+    public TextMeshProUGUI BlueBowmansValue;
+    public TextMeshProUGUI BlueGriffinsValue;
+    public TextMeshProUGUI RedSpearmansValue;
+    public TextMeshProUGUI RedBowmansValue;
+    public TextMeshProUGUI RedGriffinsValue;
 
     public static BoardManager Instance { get; private set; }
 
@@ -445,5 +453,43 @@ public class BoardManager : MonoBehaviour {
         }
 
         return null;
-    }    
+    }
+
+    public void RewriteCountOfWarriorValue(Unit unit, int countOfWarrior)
+    {
+        if (unit.isBotUnit)
+        {
+            switch (unit.tag)
+            {
+                case "Spearman":
+                    RedSpearmansValue.text = countOfWarrior.ToString();
+                    break;
+                case "Bowman":
+                    RedBowmansValue.text = countOfWarrior.ToString();
+                    break;
+                case "Griffin":
+                    RedGriffinsValue.text = countOfWarrior.ToString();
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            switch (unit.tag)
+            {
+                case "Spearman":
+                    BlueSpearmansValue.text = countOfWarrior.ToString();
+                    break;
+                case "Bowman":
+                    BlueBowmansValue.text = countOfWarrior.ToString();
+                    break;
+                case "Griffin":
+                    BlueGriffinsValue.text = countOfWarrior.ToString();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

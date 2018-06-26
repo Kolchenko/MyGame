@@ -16,6 +16,7 @@ public class ClickableAvailableTile : MonoBehaviour {
             BoardManager.Instance.GeneratePathTo(tileX, tileY);
             BoardManager.selectedUnit.MoveToEnterTile();
             Human.isDoUnit = true;
+            Unit.isHumanMakeTurn = true;
         }
     }
 }
